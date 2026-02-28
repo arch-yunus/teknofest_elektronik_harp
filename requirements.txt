@@ -1,3 +1,11 @@
-numpy
-scipy
-matplotlib
+numpy>=1.24.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+flask>=2.3.0
+pandas>=2.0.0
+torch>=2.0.0      # For future AI model integration
+mermaid-py>=0.3.0 # For documentation diagrams
+Soapysdr>=0.8.0   # SDR hardware abstraction
+flask-cors>=4.0.0
+networkx>=3.1     # For system topology
+scikit-learn>=1.2.0
