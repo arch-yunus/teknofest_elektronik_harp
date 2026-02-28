@@ -37,7 +37,7 @@ class LPIDetector:
     # ---------------------------------------------------------------
     # Method 2: Singular Value Decomposition (SVD)
     # ---------------------------------------------------------------
-    def svd_detection(self, signal, singular_ratio_thresh=10.0):
+    def svd_detection(self, signal, singular_ratio_thresh=3.0):
         """
         Constructs a Hankel matrix from the signal and decompose it with SVD.
         A large ratio between the first and second singular values indicates
@@ -53,7 +53,9 @@ class LPIDetector:
         H = np.array([signal[i:i+L] for i in range(K)])
         _, s, _ = np.linalg.svd(H, full_matrices=False)
 
-        ratio = s[0] / (s[1] + 1e-9)
+        # Compare the dominant singular value to the average of the remaining (noise floor)
+        noise_floor = np.mean(s[1:]) if len(s) > 1 else 1e-9
+        ratio = s[0] / (noise_floor + 1e-9)
         detected = ratio > singular_ratio_thresh
 
         return {

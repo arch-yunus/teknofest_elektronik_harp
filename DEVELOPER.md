@@ -12,7 +12,18 @@ The system follows a modular, pipeline-based architecture designed for low-laten
     - `DirectionFinder` computes the instantaneous DoA.
     - `KalmanFilterDOA` smooths These measurements to maintain a stable track of the emitter.
 5. **AI Classification**: `SignalClassifier` identifies the signal type (CW, BPSK, QPSK, etc.).
-6. **Autonomy & Response**: `AutonomyManager` consults the `ThreatLibrary` and triggers the appropriate `Jammer`.
+### LPI Detection (`src/signal_processing/lpi_detector.py`)
+Specialized module for detecting Low Probability of Intercept radars.
+- **Methods**: 
+    - `EnergyDetection`: Standard power-based thresholding.
+    - `SVDDetection`: Singular Value Decomposition to detect low-rank signal structures in noise.
+    - `STFTChirpDetection`: Time-frequency analysis to identify sweep bandwidths.
+- **Fusion**: Uses a 2/3 voting mechanism for robust decision making.
+
+### Autonomy & Response (`src/ai_engine/autonomy_manager.py`)
+Centralized decision support system.
+- **Hybrid Logic**: Fuses standard classifier labels with LPI detector verdicts.
+- **Priority**: LPI detections take priority over standard classification to handle stealth threats.
 
 ## 🔬 Implementation Details
 
@@ -29,13 +40,14 @@ Generates multiple `Emitter` objects with independent trajectories. It uses a ti
 
 ### Environment
 - Highly recommended to use the provided `Dockerfile` to ensure consistent dependency environments.
-- Use `verify_eh.py` as a regression test before any major commit.
+- Use `verify_eh.py` for high-level system checks.
+- Run `pytest tests/` for granular unit testing.
 
 ### CI/CD
-The GitHub Actions workflow (`.github/workflows/main.yml`) performs:
+The GitHub Actions workflow performs:
 - Dependency installation.
-- Code verification via `verify_eh.py`.
-- Basic syntax linting.
+- Unit testing via `pytest`.
+- System verification via `verify_eh.py`.
 
 ## 🚀 Future Research
 - Integration of **Deep Learning (CNN)** directly into the I/Q processing path.

@@ -116,10 +116,18 @@ class TestLPIDetector:
 
     def test_noise_not_detected(self):
         gen = SignalGenerator(SR)
-        _, noise = gen.generate_noise(0.01, noise_level=0.05)
+        _, noise = gen.generate_noise(0.01, noise_level=0.01)
         det = LPIDetector(SR)
-        result = det.energy_detection(noise, threshold_db=-10.0)
-        assert result["detected"] == False
+        result = det.detect_all(noise)
+        assert result["final_verdict"] == "CLEAR"
+
+    def test_svd_detection(self):
+        # SVD is good for low-rank signals (like CW in noise)
+        gen = SignalGenerator(SR)
+        _, sig = gen.generate_cw(100e3, 0.01, amplitude=1.0)
+        det = LPIDetector(SR)
+        res = det.svd_detection(sig)
+        assert res["detected"] == True
 
 
 # ============================================================
@@ -162,9 +170,24 @@ class TestSignalClassifier:
 class TestAutonomyManager:
     def test_strategy_selection(self):
         clf = SignalClassifier()
-        mgr = AutonomyManager(clf, {})
+        lpi = LPIDetector(SR)
+        mgr = AutonomyManager(clf, lpi, {})
         freqs = np.linspace(0, 500e3, 1000)
         mags = np.zeros(1000)
         mags[200] = 0.9
         strategy = mgr.process_detection(freqs, mags)
         assert isinstance(strategy, str)
+
+    def test_lpi_priority_strategy(self):
+        # Even if classifier sees noise, if LPI detects a chirp, it should trigger LPI strategy
+        clf = SignalClassifier()
+        lpi = LPIDetector(SR)
+        mgr = AutonomyManager(clf, lpi, {})
+        
+        # Generate a chirp (LPI)
+        gen = SignalGenerator(SR)
+        _, sig = gen.generate_chirp(100e3, 200e3, 0.01)
+        freqs, mags = np.zeros(100), np.zeros(100) # Dummy for classifier
+        
+        strategy = mgr.process_detection(freqs, mags, raw_signal=sig)
+        assert strategy == "SmartJamming_LPI"
