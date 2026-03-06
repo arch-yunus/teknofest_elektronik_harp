@@ -39,7 +39,8 @@ def test_eh_system():
     # 3. Test Autonomy & Jamming
     print("\n[3] Testing Autonomy Manager...")
     classifier = SignalClassifier()
-    autonomy = AutonomyManager(classifier, {})
+    lpi_detector_for_autonomy = LPIDetector(sample_rate=1e6)
+    autonomy = AutonomyManager(classifier, lpi_detector_for_autonomy, {})
     
     # Mock spectrum for a "CW" signal (low bandwidth)
     freqs = np.linspace(0, 500000, 1000)

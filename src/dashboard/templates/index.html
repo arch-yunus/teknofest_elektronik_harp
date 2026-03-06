@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOTM - Electronic Warfare Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #050a14;
@@ -67,8 +69,13 @@
             border: 1px solid currentColor;
         }
 
-        .status-operational { color: #00ff88; }
-        .status-alert { color: var(--accent-red); }
+        .status-operational {
+            color: #00ff88;
+        }
+
+        .status-alert {
+            color: var(--accent-red);
+        }
 
         .spectrum-view {
             height: 300px;
@@ -112,8 +119,13 @@
         }
 
         @keyframes scan {
-            from { top: 0; }
-            to { top: 100%; }
+            from {
+                top: 0;
+            }
+
+            to {
+                top: 100%;
+            }
         }
 
         .direction-finder {
@@ -137,6 +149,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>SOTM // EW SYSTEM</h1>
@@ -198,5 +211,88 @@
             </div>
         </div>
     </div>
+
+    <!-- Chart.js for spectrum drawing -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Init Chart
+        const ctx = document.getElementById('spectrumChart').getContext('2d');
+        const spectrumChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 100 }, (_, i) => i),
+                datasets: [{
+                    label: 'Magnitude',
+                    data: Array(100).fill(0),
+                    borderColor: '#00f2ff',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 242, 255, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    x: { display: false },
+                    y: {
+                        display: true,
+                        min: 0,
+                        max: 1,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        function updateDashboard() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update Status
+                    document.querySelector('.status-badge').textContent = data.system_status;
+
+                    // Update Strategy
+                    document.getElementById('strategyLabel').textContent = data.active_jammer;
+
+                    // Update Spectrum Data
+                    spectrumChart.data.datasets[0].data = data.spectrum_data;
+                    spectrumChart.update();
+
+                    // Update Threats
+                    const threatList = document.querySelector('.threat-list');
+                    threatList.innerHTML = '';
+                    if (data.detected_threats.length > 0) {
+                        data.detected_threats.forEach(t => {
+                            let color = t.confidence > 0.9 ? 'var(--accent-red)' : 'var(--accent-blue)';
+                            let state = t.confidence > 0.9 ? 'LOCKED' : 'MONITORING';
+                            threatList.innerHTML += `
+                                <li class="threat-item">
+                                    <div>
+                                        <span class="threat-name">${t.type}</span><br>
+                                        <small>Freq: ${t.frequency} | Conf: ${Math.round(t.confidence * 100)}%</small>
+                                    </div>
+                                    <span style="color: ${color};">${state}</span>
+                                </li>
+                            `;
+                        });
+
+                        // Update direction based on primary threat
+                        const primary = data.detected_threats[0];
+                        document.querySelector('.needle').style.transform = `rotate(${primary.direction}deg)`;
+                        document.querySelector('.sidebar small').textContent = `Bearing: ${primary.direction}° REL`;
+                    }
+                })
+                .catch(err => console.error("Error fetching status:", err));
+        }
+
+        // Poll every 1 second
+        setInterval(updateDashboard, 1000);
+        updateDashboard();
+    </script>
 </body>
+
 </html>

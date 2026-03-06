@@ -3,7 +3,7 @@ import numpy as np
 class SignalGenerator:
     """
     Simulates RF signal generation for testing purposes.
-    Supports: CW, Noise, CHIRP (FMCW), BPSK, QPSK, Pulsed
+    Supports: CW, Noise, CHIRP (FMCW), BPSK, QPSK, Pulsed, FHSS
     """
     def __init__(self, sample_rate=1e6):
         self.sample_rate = sample_rate
@@ -67,6 +67,31 @@ class SignalGenerator:
         carrier = np.cos(2 * np.pi * carrier_freq * t)
         pulse_mask = (t % pri) < pw
         signal[pulse_mask] = amplitude * carrier[pulse_mask]
+        return t, signal
+
+    def generate_fhss(self, hop_frequencies, hop_duration, total_duration, amplitude=1.0):
+        """
+        Generates a Frequency Hopping Spread Spectrum (FHSS) signal.
+        Jumps between given hop_frequencies every hop_duration.
+        This simulates modern tactical data links (e.g. Link-16) and frequency-agile drones.
+        """
+        t = self._t(total_duration)
+        signal = np.zeros(len(t))
+        
+        samples_per_hop = int(self.sample_rate * hop_duration)
+        num_hops = int(np.ceil(len(t) / samples_per_hop))
+        
+        for i in range(num_hops):
+            start_idx = i * samples_per_hop
+            end_idx = min((i + 1) * samples_per_hop, len(t))
+            
+            # Cyclic hopping over the provided sequence
+            freq = hop_frequencies[i % len(hop_frequencies)]
+            
+            # Phase continuity is not strictly maintained here, typical for simple FHSS models
+            t_hop = t[start_idx:end_idx]
+            signal[start_idx:end_idx] = amplitude * np.cos(2 * np.pi * freq * t_hop)
+            
         return t, signal
 
     def add_signals(self, signal1, signal2):

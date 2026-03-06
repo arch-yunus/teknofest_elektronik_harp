@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.fft import fft, fftfreq
-from scipy.signal import spectrogram
+from scipy.signal import spectrogram, hilbert
 
 class LPIDetector:
     """
@@ -90,19 +90,62 @@ class LPIDetector:
             "detected": detected
         }
 
+    # ---------------------------------------------------------------
+    # Method 4: Wigner-Ville Distribution (WVD)
+    # ---------------------------------------------------------------
+    def wvd_detection(self, signal, wvd_threshold=50.0):
+        """
+        Pseudo Wigner-Ville Distribution (PWVD) based LPI detection.
+        Provides ultra-high time-frequency resolution for detecting FMCW
+        and Phase-coded LPI radar waveforms.
+        """
+        N = min(len(signal), 512) # Limit length for computational performance
+        sig = signal[:N]
+        
+        # Compute analytic signal to avoid negative frequency interference
+        analytic_signal = hilbert(sig)
+        
+        wvd_matrix = np.zeros((N, N), dtype=complex)
+        
+        for t in range(N):
+            tau_max = min(t, N - 1 - t)
+            tau = np.arange(-tau_max, tau_max + 1)
+            # WVD kernel: x(t+tau) * x*(t-tau)
+            wvd_matrix[t, tau_max + tau] = analytic_signal[t + tau] * np.conj(analytic_signal[t - tau])
+            
+        # FFT along the delay axis
+        wvd = np.abs(fft(wvd_matrix, axis=1))
+        
+        # LPI signals compress energy tightly in the time-frequency plane.
+        # We look for high peak-to-average concentration.
+        peak_energy = np.max(wvd)
+        mean_energy = np.mean(wvd) + 1e-9
+        concentration_ratio = peak_energy / mean_energy
+        
+        detected = concentration_ratio > wvd_threshold
+        
+        return {
+            "method": "wvd",
+            "concentration_ratio": round(float(concentration_ratio), 2),
+            "threshold": wvd_threshold,
+            "detected": detected
+        }
+
     def detect_all(self, signal):
         """
-        Runs all three detection methods and returns a combined verdict.
+        Runs all four detection methods and returns a combined verdict.
         """
         e = self.energy_detection(signal)
         s = self.svd_detection(signal)
         c = self.stft_chirp_detection(signal)
+        w = self.wvd_detection(signal)
 
-        votes = sum([e["detected"], s["detected"], c["detected"]])
+        votes = sum([e["detected"], s["detected"], c["detected"], w["detected"]])
         return {
             "energy": e,
             "svd": s,
             "stft_chirp": c,
+            "wvd": w,
             "final_verdict": "DETECTED" if votes >= 2 else "CLEAR",
-            "confidence": f"{votes}/3 methods triggered"
+            "confidence": f"{votes}/4 methods triggered"
         }
