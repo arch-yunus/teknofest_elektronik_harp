@@ -33,8 +33,13 @@ def test_eh_system():
     df = DirectionFinder()
     # Signal stronger in North and East
     strengths = [0.9, 0.7, 0.1, 0.2] # N, E, S, W
-    angle = df.estimate_doa(strengths)
-    print(f"Estimated DOA Angle: {angle:.2f}°")
+    angle = df.estimate_doa_amplitude(strengths)
+    print(f"Estimated DOA Angle (Amplitude): {angle:.2f}°")
+    
+    # Phase DoA Test
+    phase_diff = np.pi / 4 # 45 degrees phase shift
+    angle_phase = df.estimate_doa_phase(phase_diff, wavelength=1.0)
+    print(f"Estimated DOA Angle (Phase): {angle_phase:.2f}°")
 
     # 3. Test Autonomy & Jamming
     print("\n[3] Testing Autonomy Manager...")

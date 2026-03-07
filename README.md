@@ -98,11 +98,12 @@ graph TD
 | Yetenek | Modül | Açıklama |
 |:---|:---|:---|
 | Spektral Analiz | `analyzer.py` | FFT tabanlı geniş bant tarama |
-| Parametre Çıkarımı | `analyzer.py` | PRI, PW ve Duty Cycle kestirimi |
-| Yön Bulma (DoA) | `analyzer.py` | 4 anten genlik karşılaştırma |
+| Parametre Çıkarımı | `analyzer.py` | Merkez Frekans, PRI, PW ve Duty Cycle kestirimi |
+| Yön Bulma (DoA) | `analyzer.py` | Genlik Karşılaştırma ve Faz İnterferometrisi |
 | Kalman Takip | `tracking.py` | Gürültü filtrelemeli hedef izi |
 | **LPI Radar Tespiti** | **`lpi_detector.py`** | **Enerji, SVD ve STFT Chirp tespiti** |
-| AI Sınıflandırma | `ai_engine/classifier.py` | Derin öğrenme tabanlı modülasyon ve tehdit tipi tahmini. |
+| AI Sınıflandırma | `ai_engine/classifier.py` | Derin öğrenme tabanlı modülasyon tahmini. |
+| Emitter Tanılama | `ai_engine/threat_library.py` | Parametre eşleştirme ile otonom tehdit kimliklendirme. |
 
 ### ⚔️ Elektronik Taarruz (ET) - Karıştırma & Aldatma
 
@@ -138,8 +139,9 @@ AI motoru, bu parametreleri kullanarak radarın çalışma modunu (Tarama, Takip
 ## 🧠 AI & Otonom Karar Destek (ADSS)
 
 Aegis-AI, sadece bir sinyal işleyici değil, aynı zamanda otonom bir operatördür.
-- **Tehdit Kütüphanesi:** Radar ve komünikasyon sinyallerine ait karakteristik imzaları içeren veritabanı.
-- **Otonom Strateji Belirleme:** Tespit edilen sinyalin tipine göre (LPI Radar, FC Radar, Link-16 vb.) en etkili EH tekniğini (Gürültü, Aldatma veya Akıllı Karıştırma) milisaniyeler içinde seçer.
+- **Tehdit Kütüphanesi:** Radar ve komünikasyon sinyallerine ait detaylı parametrik imzaları (Frekans, PRI, PW) içeren veritabanı.
+- **Otonom Emitter Tanılama:** Çıkarılan parametreleri kullanarak "Fire Control Radar", "Long Range Search" gibi spesifik emitter kimliklendirmesi.
+- **Otonom Strateji Belirleme:** Tespit edilen sinyalin tipine göre (LPI Radar, FC Radar, vb.) en etkili EH tekniğini otonom olarak seçer.
 
 ## 📊 Dashboard (Gerçek Zamanlı Gösterge Paneli)
 
@@ -220,7 +222,7 @@ Bu sürüm ile Aegis-AI, bir prototipten profesyonel bir EH Research & Developme
 │   ├── signal_processing/  # FFT, Parametre Çıkarımı, DoA ve Kalman Tracking
 │   ├── ai_engine/          # Sınıflandırma, Tehdit Kütüphanesi ve Autonomy
 │   ├── jamming_logic/      # ET (Gürültü, Aldatma, FH) algoritmaları
-│   ├── simulation/         # Görev senaryosu ve sinyal simülatörü
+│   ├── simulation/         # Görev senaryosu (ScenarioManager) ve sinyal simülatörü
 │   ├── dashboard/          # Flask tabanlı görsel arayüz
 │   └── verify_eh.py        # Sistem doğrulama scripti
 ├── Dockerfile              # Konteynır konfigürasyonu

@@ -6,8 +6,8 @@ Bu belge, yarışma şartnamesine göre projenin teknik ilerlemesini takip etmek
 - [x] Temel FFT ve Spektrum Analizi
 - [x] Gürültü Tabanı Üzerinde Sinyal Tespiti
 - [/] Otomatik Modülasyon Sınıflandırma (AI Engine)
-- [ ] Yön Bulma (Direction Finding) Algoritmaları
-- [ ] Sinyal Parametrelerinin (PRI, PW, Frekans) Çıkarımı
+- [x] Yön Bulma (Direction Finding) Algoritmaları
+- [x] Sinyal Parametrelerinin (PRI, PW, Frekans) Çıkarımı
 
 ## 2. Elektronik Taarruz (ET) Yetenekleri
 - [x] Gürültü Karıştırma (Noise Jamming)
@@ -24,7 +24,6 @@ Bu belge, yarışma şartnamesine göre projenin teknik ilerlemesini takip etmek
 ## 4. Yapay Zeka ve Otonomi
 - [/] Sinyal Sınıflandırma için Derin Öğrenme Modelleri
 - [ ] Otonom Karar Destek Mekanizması
-- [ ] Tehdit Kütüphanesi Yazılımı
-
+- [x] Tehdit Kütüphanesi Yazılımı
 ---
 *Son Güncelleme: 2026-02-20*

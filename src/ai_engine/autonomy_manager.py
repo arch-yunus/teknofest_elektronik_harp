@@ -11,9 +11,9 @@ class AutonomyManager:
         self.jammers = jammers_map
         self.active_strategy = None
 
-    def process_detection(self, freqs, magnitudes, raw_signal=None):
+    def process_detection(self, freqs, magnitudes, raw_signal=None, params=None):
         """
-        Analyzes detected signal using standard and LPI methods.
+        Analyzes detected signal using standard, LPI methods, and parameter matching.
         Activates the optimal countermeasure strategy.
         """
         # 1. Broad Spectrum Classification
@@ -25,15 +25,24 @@ class AutonomyManager:
         if raw_signal is not None:
             lpi_result = self.lpi_detector.detect_all(raw_signal)
         
-        # 3. Decision Logic (Advanced Fusion)
-        if lpi_result["final_verdict"] == "DETECTED":
-            strategy = "SmartJamming_LPI" # Target LPI specific vulnerabilities
-            label = "LPI_Radar"
+        # 3. Parameter-based Identification
+        threat_name = "Unknown"
+        if params:
+            threat_name, threat_data = ThreatLibrary.identify_emitter(params)
+            strategy = threat_data["countermeasure"]
+            label = threat_data["label"]
         else:
-            strategy = ThreatLibrary.get_countermeasure(label)
-        
+            # Fallback to classifier if no params provided
+            if lpi_result["final_verdict"] == "DETECTED":
+                strategy = "SmartJamming_LPI"
+                label = "LPI_Radar"
+                threat_name = "LPI Threat"
+            else:
+                strategy = ThreatLibrary.get_countermeasure(label)
+                threat_name = label
+
         self.active_strategy = strategy
-        print(f"[Autonomy] Detection: {label} ({lpi_result.get('confidence', 'Standard')}) -> Strategy: {strategy}")
+        print(f"[Autonomy] Detection: {threat_name} (Label: {label}) -> Strategy: {strategy}")
         
         return strategy
 
