@@ -16,6 +16,7 @@ from signal_processing.lpi_detector import LPIDetector
 from ai_engine.classifier import SignalClassifier
 from ai_engine.autonomy_manager import AutonomyManager
 from jamming_logic.jammers import NoiseJammer, SpoofingJammer, FrequencyHoppingJammer
+from simulation.scenario_manager import ScenarioManager
 
 SR = 1e6  # Sample rate
 
@@ -55,15 +56,20 @@ class TestParameterExtractor:
 class TestDirectionFinder:
     def test_north_bearing(self):
         df = DirectionFinder()
-        angle = df.estimate_doa([1.0, 0.0, 0.0, 0.0])
+        angle = df.estimate_doa_amplitude([1.0, 0.0, 0.0, 0.0])
         # Strong North signal -> angle should be near 0 or 360
         norm = angle % 360
         assert norm < 20 or norm > 340
 
     def test_east_bearing(self):
         df = DirectionFinder()
-        angle = df.estimate_doa([0.0, 1.0, 0.0, 0.0])
+        angle = df.estimate_doa_amplitude([0.0, 1.0, 0.0, 0.0])
         assert 80 < angle < 100
+
+    def test_phase_doa(self):
+        df = DirectionFinder(antenna_spacing=0.5)
+        angle = df.estimate_doa_phase(0.0, wavelength=1.0)
+        assert abs(angle) < 1.0  # 0 phase diff -> 0 degrees
 
 class TestKalmanFilter:
     def test_tracking_convergence(self):
@@ -157,15 +163,24 @@ class TestJammers:
 class TestSignalClassifier:
     def test_classify_noise(self):
         clf = SignalClassifier()
-        features = {"peak_freq": 0, "peak_mag": 0.05, "bandwidth": 0}
-        label = clf.predict(features)
+        features = {"peak_freq": 0, "peak_mag": 0.05, "bandwidth": 0, "spectral_flatness": 0}
+        label, conf = clf.predict(features)
         assert label == "Noise"
+        assert conf > 0.8
 
     def test_classify_cw(self):
         clf = SignalClassifier()
-        features = {"peak_freq": 100e3, "peak_mag": 0.9, "bandwidth": 1000}
-        label = clf.predict(features)
+        features = {"peak_freq": 100e3, "peak_mag": 0.9, "bandwidth": 1000, "spectral_flatness": 0.1}
+        label, conf = clf.predict(features)
         assert label == "CW"
+        assert conf > 0.7
+
+    def test_classify_pulsed_radar(self):
+        clf = SignalClassifier()
+        features = {"peak_freq": 150e3, "peak_mag": 0.8, "bandwidth": 20000, "spectral_flatness": 0.2}
+        pulse_params = {"PRI": 0.002, "PW": 0.0001, "CenterFreq": 150e3}
+        label, conf = clf.predict(features, pulse_params=pulse_params)
+        assert label == "Pulsed_Radar"
 
 class TestAutonomyManager:
     def test_strategy_selection(self):
@@ -179,15 +194,61 @@ class TestAutonomyManager:
         assert isinstance(strategy, str)
 
     def test_lpi_priority_strategy(self):
-        # Even if classifier sees noise, if LPI detects a chirp, it should trigger LPI strategy
         clf = SignalClassifier()
         lpi = LPIDetector(SR)
         mgr = AutonomyManager(clf, lpi, {})
-        
-        # Generate a chirp (LPI)
         gen = SignalGenerator(SR)
         _, sig = gen.generate_chirp(100e3, 200e3, 0.01)
-        freqs, mags = np.zeros(100), np.zeros(100) # Dummy for classifier
-        
+        freqs, mags = np.zeros(100), np.zeros(100)
         strategy = mgr.process_detection(freqs, mags, raw_signal=sig)
         assert strategy == "SmartJamming_LPI"
+
+    def test_risk_assessment(self):
+        clf = SignalClassifier()
+        lpi = LPIDetector(SR)
+        mgr = AutonomyManager(clf, lpi, {})
+        result = mgr.risk_assessment()
+        assert "risk_score" in result
+        assert "threat_level" in result
+
+
+# ============================================================
+# Scenario Manager Tests
+# ============================================================
+class TestScenarioManager:
+    def test_pulse_stream(self):
+        sm = ScenarioManager(SR)
+        t, sig = sm.generate_pulse_stream(150e3, 2e-3, 100e-6, 0.01)
+        assert len(sig) > 0
+        assert np.max(np.abs(sig)) > 0.1
+
+    def test_fhss_signal(self):
+        sm = ScenarioManager(SR)
+        freqs = [100e3, 200e3, 300e3]
+        t, sig = sm.generate_fhss_signal(freqs, dwell_time=0.002, n_hops=3)
+        assert len(sig) > 0
+
+    def test_scenario_lookup(self):
+        sm = ScenarioManager(SR)
+        _, sig = sm.get_scenario_signal("Long Range Search", duration=0.01)
+        assert len(sig) > 0
+
+
+# ============================================================
+# FHSS Jammer Tests
+# ============================================================
+class TestFHSSJammer:
+    def test_hop_learning(self):
+        j = FrequencyHoppingJammer(SR)
+        freqs = np.linspace(0, 500e3, 1000)
+        mags = np.zeros(1000)
+        mags[300] = 0.8  # Peak at 150 kHz
+        detected, freq = j.detect_and_learn_hop(freqs, mags)
+        assert detected is True
+        assert freq > 0
+
+    def test_hop_prediction(self):
+        j = FrequencyHoppingJammer(SR)
+        j.detected_hops = [100e3, 150e3, 200e3]
+        predicted = j.predict_next_hop()
+        assert abs(predicted - 250e3) < 10e3  # Should predict ~250 kHz

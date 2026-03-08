@@ -147,5 +147,6 @@ class LPIDetector:
             "stft_chirp": c,
             "wvd": w,
             "final_verdict": "DETECTED" if votes >= 2 else "CLEAR",
-            "confidence": f"{votes}/4 methods triggered"
+            "confidence": votes / 4.0,
+            "confidence_text": f"{votes}/4 methods triggered"
         }

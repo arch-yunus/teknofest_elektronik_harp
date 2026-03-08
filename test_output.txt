@@ -1,36 +1,25 @@
-============================= test session starts =============================
-platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\bahat\AppData\Local\Programs\Python\Python311\python.exe
-cachedir: .pytest_cache
-rootdir: G:\Di­er bilgisayarlar\Diz³st³ Bilgisayar²m\github repolar²m\teknofest_elektronik_harp
-plugins: anyio-4.12.1, langsmith-0.6.8
-collecting ... collected 20 items
-
-tests/test_aegis.py::TestSpectrumAnalyzer::test_fft_output_shape PASSED  [  5%]
-tests/test_aegis.py::TestSpectrumAnalyzer::test_peak_detection PASSED    [ 10%]
-tests/test_aegis.py::TestParameterExtractor::test_pri_extraction PASSED  [ 15%]
-tests/test_aegis.py::TestDirectionFinder::test_north_bearing PASSED      [ 20%]
-tests/test_aegis.py::TestDirectionFinder::test_east_bearing PASSED       [ 25%]
-tests/test_aegis.py::TestKalmanFilter::test_tracking_convergence PASSED  [ 30%]
-tests/test_aegis.py::TestSignalGenerator::test_chirp_generation PASSED   [ 35%]
-tests/test_aegis.py::TestSignalGenerator::test_bpsk_generation PASSED    [ 40%]
-tests/test_aegis.py::TestSignalGenerator::test_qpsk_generation PASSED    [ 45%]
-tests/test_aegis.py::TestSignalGenerator::test_pulsed_generation PASSED  [ 50%]
-tests/test_aegis.py::TestLPIDetector::test_chirp_detected PASSED         [ 55%]
-tests/test_aegis.py::TestLPIDetector::test_noise_not_detected PASSED     [ 60%]
-tests/test_aegis.py::TestLPIDetector::test_svd_detection FAILED          [ 65%]
-tests/test_aegis.py::TestJammers::test_noise_jammer PASSED               [ 70%]
-tests/test_aegis.py::TestJammers::test_spoofing_jammer PASSED            [ 75%]
-tests/test_aegis.py::TestJammers::test_fh_jammer PASSED                  [ 80%]
-tests/test_aegis.py::TestSignalClassifier::test_classify_noise PASSED    [ 85%]
-tests/test_aegis.py::TestSignalClassifier::test_classify_cw PASSED       [ 90%]
-tests/test_aegis.py::TestAutonomyManager::test_strategy_selection PASSED [ 95%]
-tests/test_aegis.py::TestAutonomyManager::test_lpi_priority_strategy PASSED [100%]
-
+.....................F....FF                                             [100%]
 ================================== FAILURES ===================================
-_____________________ TestLPIDetector.test_svd_detection ______________________
-tests\test_aegis.py:130: in test_svd_detection
-    assert res["detected"] == True
-E   assert np.False_ == True
+_______________ TestAutonomyManager.test_lpi_priority_strategy ________________
+tests\test_aegis.py:203: in test_lpi_priority_strategy
+    strategy = mgr.process_detection(freqs, mags, raw_signal=sig)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\ai_engine\autonomy_manager.py:76: in process_detection
+    print(f"[ADSS] {threat_name} | Label: {label} | Risk: {risk_str} | Conf: {confidence:.0%} -> {strategy}")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ValueError: Unknown format code '%' for object of type 'str'
+______________________ TestFHSSJammer.test_hop_learning _______________________
+tests\test_aegis.py:246: in test_hop_learning
+    detected, freq = j.detect_and_learn_hop(freqs, mags)
+                     ^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'FrequencyHoppingJammer' object has no attribute 'detect_and_learn_hop'
+_____________________ TestFHSSJammer.test_hop_prediction ______________________
+tests\test_aegis.py:253: in test_hop_prediction
+    predicted = j.predict_next_hop()
+                ^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'FrequencyHoppingJammer' object has no attribute 'predict_next_hop'
 =========================== short test summary info ===========================
-FAILED tests/test_aegis.py::TestLPIDetector::test_svd_detection - assert np.F...
-======================== 1 failed, 19 passed in 2.60s =========================
+FAILED tests/test_aegis.py::TestAutonomyManager::test_lpi_priority_strategy
+FAILED tests/test_aegis.py::TestFHSSJammer::test_hop_learning - AttributeErro...
+FAILED tests/test_aegis.py::TestFHSSJammer::test_hop_prediction - AttributeEr...
+3 failed, 25 passed in 2.11s
