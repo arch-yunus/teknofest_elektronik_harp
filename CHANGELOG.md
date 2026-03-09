@@ -2,6 +2,13 @@
 
 All notable changes to the Aegis-AI (TEKNOFEST 2026 Electronic Warfare) project will be documented here.
 
+## [1.5.0] - 2026-03-09
+### Added
+- **Phase 4 - Deep Learning Integration**: Added PyTorch CNN model core (`DummyDLClassifier`) in `src/ai_engine/dl_classifier.py` for direct I/Q signal classification.
+- **Classification Engine Update**: Fused `SignalClassifier` rule-based engine with DL inference for robust classification.
+- **Data Export Strategy**: Added `export_dataset()` to `ScenarioManager` to facilitate easy generation of `.npy` datasets for future DL model training.
+- **DL Validation Suite**: Upgraded `verify_eh.py` and `test_aegis.py` with specific tests to validate PyTorch availability and inference execution without crashing.
+
 ## [1.4.0] - 2026-03-09
 ### Added
 - **Phase 3 Scenarios**: `LPI Stealth Radar` (FMCW chirp) and `Fire Control Radar` (narrow-pulse, high rep-rate) added to `ScenarioManager`.

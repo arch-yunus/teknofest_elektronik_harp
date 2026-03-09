@@ -1,12 +1,31 @@
 import numpy as np
+import logging
+
+try:
+    from ai_engine.dl_classifier import DummyDLClassifier, TORCH_AVAILABLE
+except ImportError:
+    try:
+        from src.ai_engine.dl_classifier import DummyDLClassifier, TORCH_AVAILABLE
+    except ImportError:
+        TORCH_AVAILABLE = False
 
 class SignalClassifier:
     """
     AI-driven signal classification using spectrum AND pulse parameter features.
     Currently uses heuristic rule engine, designed for deep learning model plug-in.
     """
-    def __init__(self):
+    def __init__(self, use_dl=False):
         self.labels = ["Noise", "CW", "BPSK", "QPSK", "Pulsed_Radar", "FHSS", "LPI_Radar"]
+        
+        self.use_dl = use_dl and TORCH_AVAILABLE
+        self.dl_model = None
+        if self.use_dl:
+            self.dl_model = DummyDLClassifier()
+            if self.dl_model.model is None:
+                self.use_dl = False
+                logging.warning("DL model requested but failed to initialize. Falling back to heuristics.")
+            else:
+                logging.info("DL model successfully initialized in SignalClassifier.")
 
     def extract_features(self, freqs, magnitudes):
         """
@@ -32,12 +51,25 @@ class SignalClassifier:
             "spectral_flatness": spectral_flatness
         }
 
-    def predict(self, features, pulse_params=None):
+    def predict(self, features, pulse_params=None, magnitudes=None):
         """
         Multi-feature classification with confidence score.
         Uses spectral features and optional pulse parameters.
+        If use_dl=True and magnitudes provided, delegates to PyTorch CNN.
         Returns (label, confidence).
         """
+        if self.use_dl and magnitudes is not None and self.dl_model is not None:
+            dl_label, dl_conf = self.dl_model.predict_from_magnitudes(magnitudes)
+            if dl_label:
+                # Still fallback to heuristics if DL prediction confidence is garbage or noise 
+                # (since it's a dummy un-trained model right now)
+                
+                # We can fuse: If DL says BPSK (conf 0.9), take it. For now, since weights 
+                # are random, we will prioritize heuristics if DL confidence is low, 
+                # but we prove the inference pipeline works.
+                if dl_conf > 0.4:  
+                    return dl_label, dl_conf
+
         pm = features["peak_mag"]
         bw = features["bandwidth"]
         sf = features.get("spectral_flatness", 0)

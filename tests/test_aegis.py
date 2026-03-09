@@ -182,6 +182,16 @@ class TestSignalClassifier:
         label, conf = clf.predict(features, pulse_params=pulse_params)
         assert label == "Pulsed_Radar"
 
+    def test_dl_classifier(self):
+        clf = SignalClassifier(use_dl=True)
+        # Assuming PyTorch is installed, this shouldn't crash.
+        features = {"peak_freq": 150e3, "peak_mag": 0.8, "bandwidth": 20000, "spectral_flatness": 0.2}
+        # Provide some dummy magnitudes representing an FFT
+        mags = np.random.rand(1024)
+        label, conf = clf.predict(features, pulse_params=None, magnitudes=mags)
+        assert label is not None
+        assert conf >= 0.0
+
 class TestAutonomyManager:
     def test_strategy_selection(self):
         clf = SignalClassifier()

@@ -86,3 +86,36 @@ class ScenarioManager:
             # Random noise (Clear Sky)
             t = np.linspace(0, duration, int(self.sample_rate * duration))
             return t, np.random.normal(0, 0.1, len(t))
+
+    def export_dataset(self, scenario_name, num_samples, filename_prefix="dataset"):
+        """
+        Exports multiple signals of a scenario to a NumPy array for DL training.
+        """
+        import os
+        import time
+        
+        logging_msg = f"Generating dataset for {scenario_name}..."
+        print(logging_msg)
+        dataset = []
+        for _ in range(num_samples):
+            # Vary duration slightly to add variance to the data
+            dur = np.random.uniform(0.008, 0.012)
+            t, signal = self.get_scenario_signal(scenario_name, duration=dur)
+            dataset.append(signal)
+
+        # Pad or truncate to a fixed size so we can stack
+        ref_size = int(self.sample_rate * 0.01)
+        dataset_padded = []
+        for sig in dataset:
+            if len(sig) > ref_size:
+                dataset_padded.append(sig[:ref_size])
+            else:
+                dataset_padded.append(np.pad(sig, (0, ref_size - len(sig)), 'constant'))
+                
+        dataset_np = np.stack(dataset_padded)
+        
+        os.makedirs("data", exist_ok=True)
+        filename = f"data/{filename_prefix}_{scenario_name.replace(' ', '_')}_{int(time.time())}.npy"
+        np.save(filename, dataset_np)
+        print(f"Exported {num_samples} samples to {filename}")
+        return filename

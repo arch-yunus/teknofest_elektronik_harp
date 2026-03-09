@@ -55,13 +55,14 @@ def test_eh_system():
 
     # 4. Autonomy Manager
     print("\n[4] Autonomy & Threat Prioritization")
-    clf = SignalClassifier()
+    clf = SignalClassifier(use_dl=True)
     autonomy = AutonomyManager(clf, lpi, {})
     freqs = np.linspace(0, 500e3, 1000)
     mags  = np.zeros(1000); mags[500] = 1.0
     strategy = autonomy.process_detection(freqs, mags)
     check("Strategy returned",              isinstance(strategy, str))
     check("get_highest_priority_threat runs", True)  # just verify no crash
+    check("DL PyTorch Inference runs (if installed)", clf.use_dl)
 
     # 5. Jammers
     print("\n[5] Jamming Assets")
