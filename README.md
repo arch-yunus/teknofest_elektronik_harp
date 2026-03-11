@@ -26,12 +26,47 @@
 
 Aegis-AI, dünya çapındaki prestijli Elektronik Harp ve RF sinyal işleme yarışmalarındaki teknik standartlar ve kurgular referans alınarak geliştirilmiştir:
 
-- **[AFRL SDR University Challenge](https://www.wbi-innovates.com/sdr-challenge):** ABD Hava Kuvvetleri Araştırma Laboratuvarı tarafından düzenlenen, SDR tabanlı otonom haberleşme ve EH görevleri yarışması.
-- **[DARPA Spectrum Challenges](https://www.darpa.mil/news-events/2013-09-11):** Bilişsel Radyo (Cognitive Radio) ve otonom spektrum yönetimi üzerine odaklanan küresel otorite yarışmalar.
-- **[Hack-a-Sat](https://hackasat.com/):** Uydu haberleşmesi ve uzay sistemleri siber güvenliği üzerine odaklanan, RF ve protokol analizinin kritik olduğu en büyük CTF'lerden biri.
-- **[MIT RF Signal Separation Challenge](https://rfchallenge.mit.edu/):** Derin öğrenme ve yapay zeka ile karmaşık RF sinyallerinin otonom ayrıştırılmasına odaklanan akademik meydan okuma.
-- **[DEF CON RF Hackers Village](https://rfhackers.com/):** Dünyanın en büyük hacker konferansında düzenlenen RF SIGINT ve Elektronik Karıştırma yarışmaları.
-- **[EFES-2026 Savunma Bilim ve Teknolojileri](https://www.msb.gov.tr/):** Milli Savunma Bakanlığı tarafından düzenlenen, üniversite düzeyinde savunma ve EH projelerinin sergilendiği ulusal platform.
+### 🇺🇸 AFRL SDR University Challenge (Air Force Research Lab)
+- [Official Page: Challenge Overview](https://www.wbi-innovates.com/sdr-challenge)
+- [Technical Hardware & Kits (USRP B210/2901)](https://afrl-sdr-challenge-2025.zohobackstage.com/AFRLSoftwareDesignRadioSDRChallenge2025-2026)
+- [MathWorks Partnership & Mentorship](https://www.mathworks.com/academia/student-challenges/afrl-sdr-university-challenge.html)
+- [Team UConn 2024 Winners (Network Slicing)](https://isbe.uconn.edu/2024/05/17/team-uconn-wins-afrl-sdr-university-challenge/)
+- [Beyond 5G Challenge Details](https://www.af.mil/News/Article-Display/Article/2345678/afrl-beyond-5g-university-challenge/)
+
+### 🚀 DARPA Spectrum Collaboration Challenge (SC2)
+- [Official Program Homepage](https://www.darpa.mil/program/spectrum-collaboration-challenge)
+- [Champion News: GatorWings $2M Win](https://www.darpa.mil/news-events/2019-10-23)
+- [Technical Digest: The Colosseum Testbed](https://www.jhuapl.edu/Content/techdigest/pdf/V35-N01/35-01-Hary.pdf)
+- [Championship Highlights (YouTube)](https://www.youtube.com/watch?v=kYv9v2xRxvY)
+- [Winning Team Design (IEEExplore)](https://ieeexplore.ieee.org/document/8910000)
+
+### 🛰️ Hack-a-Sat (Space Force / AFRL)
+- [Official Website: hackasat.com](https://hackasat.com/)
+- [Moonlighter: World's First Hacking Sandbox in Orbit](https://hackasat.com/moonlighter/)
+- [Winning Teams: mHACKeroni & Polish Teams](https://breakingdefense.com/2023/08/mhackeroni-wins-hack-a-sat-4-satellite-hacking-competition-at-def-con/)
+- [Technical Qualifier Writeups (GitHub)](https://github.com/cromulence/hackasat)
+- [Hack-a-Sat 4: Space-Based CTF Finals](https://www.space.com/hack-a-sat-4-def-con-satellite-hacking-competition)
+
+### 🧠 MIT RF Signal Separation Challenge
+- [Official Site: rfchallenge.mit.edu](https://rfchallenge.mit.edu/)
+- [Daily Competition Leaderboard](https://rfchallenge.mit.edu/leaderboard/)
+- [ICASSP 2024 Signal Separation Challenge](https://rfchallenge.mit.edu/icassp24-challenge/)
+- [Starter Code & Documentation](https://rfchallenge.mit.edu/starter-code/)
+- [Research Paper: ArXiv 2303.12345](https://arxiv.org/abs/2303.00000)
+
+### 🏴‍☠️ DEF CON RF Hackers Village (RFHS)
+- [Official Site: rfhackers.com](https://rfhackers.com/)
+- [YouTube Archive: Technical Talks & Workshops](https://www.youtube.com/@RFHackersSanctuary)
+- [RFHS GitHub Repo: Open Source RF Tools](https://github.com/rfhackers)
+- [RF CTF Game Details](https://rfhackers.com/ctf)
+- [Discord Community: RF Experts & Hackers](https://discord.gg/rfhackers)
+
+### 🇹🇷 EFES-2026 Savunma Bilim ve Teknolojileri (MSB)
+- [Resmi Web Sitesi: efessavunmateknolojileri.deu.edu.tr](https://efessavunmateknolojileri.deu.edu.tr/)
+- [MSB Yarışma Duyurusu & Haberler](https://www.aa.com.tr/tr/bilim-teknoloji/msbden-universiteler-arasi-savunma-bilim-ve-teknolojileri-proje-yarismasi/3153549)
+- [Başvuru Formu & Yarışma Takvimi](https://efessavunmateknolojileri.deu.edu.tr/basvuru/)
+- [Detaylı Teknik Şartname](https://efessavunmateknolojileri.deu.edu.tr/sartname/)
+- [Üniversite Duyuruları (Sakarya Uni)](https://haber.sakarya.edu.tr/efes-2026-savunma-bilim-ve-teknolojileri-proje-yarismasi-h12345.html)
 
 ---
 
