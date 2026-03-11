@@ -2,6 +2,17 @@
 
 All notable changes to the Aegis-AI (TEKNOFEST 2026 Electronic Warfare) project will be documented here.
 
+## [2.0.0] - 2026-03-11
+### Added
+- **Full Spec Compliance**: Completed all TEKNOFEST 2026 requirements including ED, ET, and AI.
+- **Advanced EA Assets**: Implemented `GNSSJammer` (GPS L1 Spoofing), `AnalogVoiceJammer` (Voice Spoofing), and `SpoofingJammer` (RGPO/VGPO).
+- **Tactical Dashboard 2.0**: Redesigned UI with glassmorphism, Tactical Map visualization, Hardware Health monitoring (Jetson/SDR), and real-time SDR tuning controls.
+- **SigMF Recording**: Integrated `SigMFExporter` for standardized RF data capture directly from the dashboard.
+- **2D Geolocation**: Added `Geolocator` with triangulation logic and tactical map display.
+- **End-to-End ADSS Integration**: Wired `AutonomyManager` directly to `JammerCoordinator` for autonomous multi-jammer response.
+- **Hardware Integration Plan**: Added `DONANIM_PLANI.md` for USRP B210 and Jetson Orin deployment.
+- **AI/AMC Report**: Added `AI_MODULASYON_SINIFLANDIRMA.md` for AI modulation classification analysis.
+
 ## [1.5.0] - 2026-03-09
 ### Added
 - **Phase 4 - Deep Learning Integration**: Added PyTorch CNN model core (`DummyDLClassifier`) in `src/ai_engine/dl_classifier.py` for direct I/Q signal classification.

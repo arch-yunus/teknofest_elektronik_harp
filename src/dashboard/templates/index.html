@@ -4,294 +4,1325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOTM - Electronic Warfare Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500&display=swap"
+    <title>Aegis-AI | Taktik EH Kontrol Paneli</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
-            --bg-color: #050a14;
-            --panel-bg: rgba(15, 25, 45, 0.8);
-            --accent-blue: #00f2ff;
-            --accent-red: #ff3c3c;
-            --text-color: #e0e6ed;
-            --glass-border: rgba(0, 242, 255, 0.2);
+            --bg-base: #030712;
+            --bg-panel: rgba(10, 15, 30, 0.6);
+            --bg-panel-hover: rgba(15, 25, 45, 0.8);
+
+            --neon-blue: #00f2ff;
+            --neon-blue-glow: rgba(0, 242, 255, 0.4);
+
+            --neon-red: #ff3366;
+            --neon-red-glow: rgba(255, 51, 102, 0.5);
+
+            --neon-yellow: #ffcc00;
+            --neon-green: #00ff88;
+
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+
+            --glass-border: rgba(0, 242, 255, 0.15);
+            --glass-border-alert: rgba(255, 51, 102, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg-base);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            background-image: radial-gradient(circle at 50% 50%, #0a1f3d 0%, #050a14 100%);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(255, 51, 102, 0.05) 0%, transparent 50%),
+                linear-gradient(to bottom, #030712 0%, #050a14 100%);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
 
-        .header {
-            padding: 20px 40px;
-            background: rgba(0, 0, 0, 0.4);
-            border-bottom: 2px solid var(--accent-blue);
+        /* Abstract Grid Background overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Header --- */
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 15px 30px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            z-index: 100;
         }
 
-        .header h1 {
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand h1 {
             font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px var(--neon-blue-glow);
             margin: 0;
-            letter-spacing: 4px;
-            color: var(--accent-blue);
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
         }
 
-        .container {
+        .brand h1 span {
+            color: var(--neon-blue);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .status-pill.alert {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-glow);
+            animation: pulse-alert 2s infinite;
+        }
+
+        @keyframes pulse-alert {
+            0% {
+                box-shadow: 0 0 5px var(--neon-red-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 20px var(--neon-red-glow);
+            }
+
+            100% {
+                box-shadow: 0 0 5px var(--neon-red-glow);
+            }
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        /* --- Main Layout --- */
+        .dashboard-container {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-gap: 20px;
-            padding: 30px;
+            grid-template-columns: 3fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            padding: 20px 30px;
+            flex-grow: 1;
         }
 
         .panel {
-            background: var(--panel-bg);
+            background: var(--bg-panel);
             border: 1px solid var(--glass-border);
-            padding: 20px;
             border-radius: 12px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
+        /* Cyberpunk decorative corners */
+        .panel::before,
+        .panel::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+
+        .panel::before {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 10px;
+        }
+
+        .panel::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 10px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title i {
+            color: var(--neon-blue);
+            font-size: 1.2rem;
+        }
+
+        /* --- Top Left: Spectrum & Parameters --- */
+        .main-vessel {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .spectrum-container {
+            flex-grow: 1;
+            min-height: 350px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            padding: 15px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue), 0 0 5px #fff;
+            animation: scan-vertical 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            z-index: 10;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes scan-vertical {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 0.6;
+            }
+
+            95% {
+                opacity: 0.6;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Parameter Grid */
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .param-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .param-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--glass-border);
+            transform: translateY(-2px);
+        }
+
+        .param-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
             text-transform: uppercase;
-            font-size: 0.8rem;
-            border: 1px solid currentColor;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
         }
 
-        .status-operational {
-            color: #00ff88;
+        .param-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
         }
 
-        .status-alert {
-            color: var(--accent-red);
+        .param-value.highlight {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue-glow);
         }
 
-        .spectrum-view {
-            height: 300px;
-            background: rgba(0, 0, 0, 0.3);
+        .param-value.warning {
+            color: var(--neon-yellow);
+        }
+
+        /* --- Hardware Monitor Panel --- */
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .hw-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .hw-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .hw-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        /* --- Tactical Map --- */
+        .tactical-map {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
             border-radius: 8px;
             position: relative;
             overflow: hidden;
-            border: 1px dashed var(--glass-border);
+            margin-top: 10px;
         }
 
-        .threat-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .threat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background 0.3s;
-        }
-
-        .threat-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .threat-name {
-            font-weight: 600;
-            color: var(--accent-red);
-        }
-
-        .scan-animation {
-            width: 100%;
-            height: 2px;
-            background: var(--accent-blue);
+        .map-grid-svg {
             position: absolute;
             top: 0;
-            animation: scan 4s linear infinite;
-            box-shadow: 0 0 15px var(--accent-blue);
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
         }
 
-        @keyframes scan {
+        .map-emitter {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--neon-red);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-red);
+            transform: translate(-50%, -50%);
+        }
+
+        .map-sensor {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--neon-blue);
+            transform: translate(-50%, -50%) rotate(45deg);
+            box-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        /* --- Tuning Panel --- */
+        .tuning-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .range-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cyber-range {
+            flex-grow: 1;
+            accent-color: var(--neon-blue);
+            cursor: pointer;
+        }
+
+        /* --- Bottom Left: Electronic Attack Controls --- */
+        .ea-panel {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .control-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .control-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .cyber-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cyber-btn i {
+            font-size: 1rem;
+        }
+
+        /* Button Variants */
+        .cyber-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .cyber-btn.jam {
+            border-left: 3px solid var(--neon-red);
+        }
+
+        .cyber-btn.jam:hover,
+        .cyber-btn.jam.active {
+            background: rgba(255, 51, 102, 0.15);
+            border-color: var(--neon-red);
+            color: #fff;
+            box-shadow: 0 0 15px var(--neon-red-glow);
+        }
+
+        .cyber-btn.spoof {
+            border-left: 3px solid var(--neon-yellow);
+        }
+
+        .cyber-btn.spoof:hover,
+        .cyber-btn.spoof.active {
+            background: rgba(255, 204, 0, 0.15);
+            border-color: var(--neon-yellow);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+        }
+
+        .cyber-btn.auto {
+            grid-column: span 2;
+            border: 1px solid var(--neon-blue);
+            background: rgba(0, 242, 255, 0.05);
+            color: var(--neon-blue);
+        }
+
+        .cyber-btn.auto:hover,
+        .cyber-btn.auto.active {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-blue-glow);
+            font-weight: 800;
+        }
+
+        /* --- Right Sidebar: Threats & Direction --- */
+        .sidebar {
+            grid-column: 2 / 3;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Threat Radar/Compass */
+        .doa-container {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(0, 242, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            margin: 10px 0;
+        }
+
+        .radar-circle {
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(0, 242, 255, 0.3);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1), inset 0 0 20px rgba(0, 242, 255, 0.1);
+        }
+
+        .radar-circle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            border-top: 1px dashed rgba(0, 242, 255, 0.3);
+        }
+
+        .radar-circle::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            border-left: 1px dashed rgba(0, 242, 255, 0.3);
+        }
+
+        .radar-sweep {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: conic-gradient(from 0deg, transparent 70%, rgba(0, 242, 255, 0.4) 100%);
+            transform-origin: bottom left;
+            animation: radar-spin 4s linear infinite;
+        }
+
+        @keyframes radar-spin {
             from {
-                top: 0;
+                transform: rotate(0deg);
             }
 
             to {
-                top: 100%;
+                transform: rotate(360deg);
             }
         }
 
-        .direction-finder {
-            width: 200px;
-            height: 200px;
-            border: 2px solid var(--glass-border);
+        .target-blip {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--neon-red);
             border-radius: 50%;
-            margin: 20px auto;
-            position: relative;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--neon-red);
+            /* Position set via JS */
+            top: 30%;
+            left: 70%;
+            animation: blip-pulse 1s infinite alternate;
+            z-index: 5;
         }
 
-        .needle {
-            width: 2px;
-            height: 100px;
-            background: var(--accent-red);
+        @keyframes blip-pulse {
+            from {
+                box-shadow: 0 0 5px var(--neon-red), 0 0 0px rgba(255, 51, 102, 0.5);
+            }
+
+            to {
+                box-shadow: 0 0 15px var(--neon-red), 0 0 15px rgba(255, 51, 102, 0.8);
+            }
+        }
+
+        .compass-label {
             position: absolute;
-            left: 99px;
-            top: 0;
-            transform-origin: bottom;
-            box-shadow: 0 0 10px var(--accent-red);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+
+        .c-n {
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .c-s {
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .c-e {
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .c-w {
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .bearing-display {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        /* Threat Log Grid */
+        .threat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            max-height: 400px;
+            padding-right: 5px;
+        }
+
+        /* Custom Scrollbar */
+        .threat-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .threat-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .threat-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 242, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .threat-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid var(--text-muted);
+            border-radius: 4px 8px 8px 4px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .threat-card.high-risk {
+            border-left-color: var(--neon-red);
+            background: linear-gradient(90deg, rgba(255, 51, 102, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
+        }
+
+        .threat-card.med-risk {
+            border-left-color: var(--neon-yellow);
+        }
+
+        .threat-card.active-jam {
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.2);
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                border-color: rgba(255, 51, 102, 0.3);
+            }
+
+            50% {
+                border-color: rgba(255, 51, 102, 1);
+            }
+
+            100% {
+                border-color: rgba(255, 51, 102, 0.3);
+            }
+        }
+
+        .threat-info h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .threat-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+        }
+
+        .threat-meta span {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .threat-status {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .threat-status.locked {
+            color: var(--neon-red);
+        }
+
+        .threat-status.jamming {
+            color: var(--neon-yellow);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+
+            .sidebar {
+                grid-column: 1 / 2;
+                grid-row: 3 / 4;
+            }
+
+            .ea-panel {
+                grid-row: 2 / 3;
+            }
+
+            .doa-container {
+                height: 200px;
+            }
+
+            .radar-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .radar-sweep {
+                width: 75px;
+                height: 75px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <h1>SOTM // EW SYSTEM</h1>
-        <div class="status-badge status-operational">System Operational</div>
-    </div>
+    <!-- Top Navigation Block -->
+    <nav class="navbar">
+        <div class="brand">
+            <h1>AEGIS<span>AI</span></h1>
+        </div>
+        <div class="system-status">
+            <div id="missionTimer"
+                style="font-family: 'Orbitron'; font-size: 0.85rem; color: var(--text-muted); margin-right: 15px;">
+                00:00:00</div>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">OP MODU: <strong
+                    style="color: #fff;">OTONOM</strong></span>
+            <button class="cyber-btn" id="btnRecord" onclick="triggerRecord()"
+                style="padding: 4px 12px; font-size: 0.75rem; border: 1px solid var(--neon-red); color: var(--neon-red); background: rgba(255, 51, 102, 0.1);">
+                <i class="fa-solid fa-circle"></i> KAYIT BAŞLAT
+            </button>
+            <div id="connectionStatus" class="status-pill">
+                <div class="status-indicator"></div>
+                SİSTEM NORMAL
+            </div>
+        </div>
+    </nav>
 
-    <div class="container">
-        <div class="main-stats">
-            <div class="panel">
-                <h2 style="font-family: Orbitron; font-size: 1rem;">Real-time Spectrum Analysis</h2>
-                <div class="spectrum-view">
-                    <div class="scan-animation"></div>
-                    <canvas id="spectrumChart" style="width: 100%; height: 100%;"></canvas>
-                </div>
+    <!-- Main Dashboard Area -->
+    <div class="dashboard-container">
+
+        <!-- Left Side: Radar & Sensors -->
+        <div class="panel main-vessel">
+            <div class="panel-header">
+                <div class="panel-title"><i class="fa-solid fa-wave-square"></i> Gerçek Zamanlı Spektrum Analizi</div>
+                <div style="font-family: 'Orbitron'; font-size: 0.8rem; color: var(--neon-blue);">SPAN: 1 GHz | RBW: 10
+                    kHz</div>
             </div>
 
-            <div class="panel" style="margin-top: 20px;">
-                <h2 style="font-family: Orbitron; font-size: 1rem;">Active Jamming Response</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 4px;">
-                        <span style="font-size: 0.7rem; opacity: 0.6;">Active Strategy</span><br>
-                        <strong id="strategyLabel" style="color: var(--accent-blue);">BARRAGE NOISE</strong>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 4px;">
-                        <span style="font-size: 0.7rem; opacity: 0.6;">Power Output</span><br>
-                        <strong style="color: var(--accent-red);">120W PEP</strong>
-                    </div>
+            <div class="spectrum-container">
+                <div class="scan-line"></div>
+                <!-- Chart.js Canvas -->
+                <canvas id="spectrumChart" style="width: 100%; height: 100%;"></canvas>
+            </div>
+
+            <div class="param-grid">
+                <div class="param-card">
+                    <span class="param-label">Merkez Frekans</span>
+                    <span class="param-value highlight" id="paramFreq">-- MHz</span>
+                </div>
+                <div class="param-card">
+                    <span class="param-label">Bant Genişliği</span>
+                    <span class="param-value" id="paramBw">-- kHz</span>
+                </div>
+                <div class="param-card">
+                    <span class="param-label">Güç Seviyesi</span>
+                    <span class="param-value warning" id="paramPower">-- dBm</span>
+                </div>
+                <div class="param-card">
+                    <span class="param-label">PRI / PW</span>
+                    <span class="param-value" id="paramPulse">-- / --</span>
+                </div>
+                <div class="param-card">
+                    <span class="param-label">Modülasyon</span>
+                    <span class="param-value" id="paramMod">--</span>
                 </div>
             </div>
         </div>
 
-        <div class="sidebar">
-            <div class="panel">
-                <h2 style="font-family: Orbitron; font-size: 1rem;">Threat Indicators</h2>
-                <ul class="threat-list">
-                    <li class="threat-item">
-                        <div>
-                            <span class="threat-name">Fire Control Radar</span><br>
-                            <small>Band: X-Band | Conf: 92%</small>
-                        </div>
-                        <span style="color: var(--accent-red);">LOCKED</span>
-                    </li>
-                    <li class="threat-item">
-                        <div>
-                            <span class="threat-name">Comm Link</span><br>
-                            <small>S-Band | Conf: 88%</small>
-                        </div>
-                        <span style="color: grey;">MONITORING</span>
-                    </li>
-                </ul>
+        <!-- Left Bottom: Electronic Attack (ET) Controls -->
+        <div class="panel ea-panel">
+            <div class="panel-header" style="border-bottom-color: rgba(255, 51, 102, 0.3);">
+                <div class="panel-title" style="color: var(--neon-red);"><i class="fa-solid fa-crosshairs"></i>
+                    Elektronik Taarruz (ET) Sistemleri</div>
+                <div class="status-pill alert" style="font-size: 0.7rem; padding: 4px 10px;">
+                    <i class="fa-solid fa-bolt"></i> TX HAZIR
+                </div>
             </div>
 
-            <div class="panel" style="margin-top: 20px; text-align: center;">
-                <h2 style="font-family: Orbitron; font-size: 1rem;">Direction Findings</h2>
-                <div class="direction-finder">
-                    <div class="needle" style="transform: rotate(45deg);"></div>
+            <div class="controls-grid">
+                <!-- Jamming -->
+                <div class="control-section">
+                    <h3>Sinyal Karıştırma (RF Bastırma)</h3>
+                    <div class="btn-grid">
+                        <button class="cyber-btn jam" onclick="triggerAction('jam', 'barrage')">
+                            <i class="fa-solid fa-stream"></i> Baraj (Barrage)
+                        </button>
+                        <button class="cyber-btn jam" onclick="triggerAction('jam', 'spot')">
+                            <i class="fa-solid fa-bullseye"></i> Nokta (Spot)
+                        </button>
+                        <button class="cyber-btn jam" onclick="triggerAction('jam', 'interleaved')"
+                            style="grid-column: span 2;">
+                            <i class="fa-solid fa-layer-group"></i> Arabakışlı (Interleaved)
+                        </button>
+                    </div>
                 </div>
-                <small>Bearing: 045° REL</small>
+
+                <!-- Spoofing -->
+                <div class="control-section">
+                    <h3>Aldatma ve Yanıltma (Spoofing)</h3>
+                    <div class="btn-grid">
+                        <button class="cyber-btn spoof" onclick="triggerAction('spoof', 'gnss')">
+                            <i class="fa-solid fa-satellite"></i> GNSS L1
+                        </button>
+                        <button class="cyber-btn spoof" onclick="triggerAction('spoof', 'analog')">
+                            <i class="fa-solid fa-walkie-talkie"></i> Analog Ses
+                        </button>
+                        <button class="cyber-btn spoof" onclick="triggerAction('spoof', 'rgpo')"
+                            style="grid-column: span 2;">
+                            <i class="fa-solid fa-plane-slash"></i> Radar (RGPO)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SDR Tuning Controls -->
+            <div class="control-section" style="margin-top: 15px;">
+                <h3>SDR Donanım Kontrolü (Simülasyon)</h3>
+                <div class="tuning-controls">
+                    <div class="range-wrap">
+                        <span class="hw-label" style="width: 80px;">MERKEZ FRQ</span>
+                        <input type="range" class="cyber-range" min="100" max="6000" value="150" id="tuneFreq"
+                            oninput="updateTuning()">
+                        <span class="hw-value" id="valFreq" style="width: 70px; font-size: 0.8rem;">150 MHz</span>
+                    </div>
+                    <div class="range-wrap">
+                        <span class="hw-label" style="width: 80px;">RX KAZANÇ</span>
+                        <input type="range" class="cyber-range" min="0" max="76" value="45" id="tuneGain"
+                            oninput="updateTuning()">
+                        <span class="hw-value" id="valGain" style="width: 70px; font-size: 0.8rem;">45 dB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Control -->
+            <button class="cyber-btn auto active" id="btnAutoMode" onclick="toggleAutoMode()" style="margin-top: 15px;">
+                <i class="fa-solid fa-brain"></i> OTONOM MÜDAHALE (ADSS) AKTİF
+            </button>
+        </div>
+
+        <!-- Right Side: Threats & Direction -->
+        <div class="panel sidebar">
+            <!-- DF Module -->
+            <div class="panel-header">
+                <div class="panel-title"><i class="fa-regular fa-compass"></i> Yön Bulma (Kestirme)</div>
+            </div>
+
+            <div class="doa-container">
+                <div class="compass-label c-n">N 0°</div>
+                <div class="compass-label c-e">E 90°</div>
+                <div class="compass-label c-s">S 180°</div>
+                <div class="compass-label c-w">W 270°</div>
+
+                <div class="radar-circle">
+                    <div class="radar-sweep"></div>
+                    <!-- Blip positioned dynamically -->
+                    <div class="target-blip" id="targetBlip" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="bearing-display" id="bearingText">TARANIYOR...</div>
+
+            <!-- Geolocation Module -->
+            <div class="panel-header" style="margin-top: 15px;">
+                <div class="panel-title"><i class="fa-solid fa-location-dot"></i> Konum Belirleme</div>
+            </div>
+            <div class="param-card" style="text-align: left; padding: 10px;">
+                <div style="font-size: 0.7rem; color: var(--text-muted);">TAHMİNİ KOORDİNATLAR (WGS84)</div>
+                <div id="geoCoord"
+                    style="font-family: Orbitron; font-size: 0.85rem; margin-top: 5px; color: var(--neon-blue);">
+                    39.9255° N, 32.8662° E</div>
+                <div id="geoError" style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">HATA PAYI:
+                    <span style="color:var(--neon-yellow);">±12m</span>
+                </div>
+            </div>
+
+            <!-- Threat List -->
+            <div class="panel-header" style="margin-top: 15px;">
+                <div class="panel-title"><i class="fa-solid fa-shield-halved"></i> Tehdit Ortamı</div>
+                <span style="font-family: Orbitron; font-size: 0.8rem;" id="riskScore">RİSK: DÜŞÜK</span>
+            </div>
+
+            <div class="threat-list" id="threatContainer">
+                <!-- Threats injected by JS -->
+                <div class="threat-card" style="justify-content: center; color: var(--text-muted); font-size: 0.9rem;">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="margin-right: 10px;"></i> Çevre Analiz
+                    Ediliyor...
+                </div>
             </div>
         </div>
+
     </div>
 
-    <!-- Chart.js for spectrum drawing -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Init Chart
+        // --- Global State ---
+        let autoMode = true;
+
+        // --- Initialize Chart.js for Spectrum ---
+        Chart.defaults.color = 'rgba(255, 255, 255, 0.5)';
+        Chart.defaults.font.family = 'Inter';
+
         const ctx = document.getElementById('spectrumChart').getContext('2d');
+
+        // Create gradient fill
+        let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(0, 242, 255, 0.5)');
+        gradient.addColorStop(1, 'rgba(0, 242, 255, 0.0)');
+
         const spectrumChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Array.from({ length: 100 }, (_, i) => i),
+                labels: Array.from({ length: 120 }, (_, i) => i),
                 datasets: [{
-                    label: 'Magnitude',
-                    data: Array(100).fill(0),
+                    label: 'Genlik (dB)',
+                    data: Array(120).fill(0),
                     borderColor: '#00f2ff',
-                    borderWidth: 1,
+                    borderWidth: 2,
                     pointRadius: 0,
                     fill: true,
-                    backgroundColor: 'rgba(0, 242, 255, 0.1)'
+                    backgroundColor: gradient,
+                    tension: 0.4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                animation: false,
+                animation: { duration: 200 }, // Smooth fast transitions
                 scales: {
-                    x: { display: false },
+                    x: {
+                        display: false
+                    },
                     y: {
                         display: true,
                         min: 0,
-                        max: 1,
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        max: 1.2,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            tickLength: 10
+                        },
+                        ticks: {
+                            callback: function (value) { return value.toFixed(1) + ' dB'; }
+                        }
                     }
                 },
-                plugins: { legend: { display: false } }
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                },
+                interaction: { mode: 'none' }
             }
         });
+
+        // --- UI Update Logic ---
 
         function updateDashboard() {
             fetch('/api/status')
                 .then(response => response.json())
                 .then(data => {
-                    // Update Status
-                    document.querySelector('.status-badge').textContent = data.system_status;
-
-                    // Update Strategy
-                    document.getElementById('strategyLabel').textContent = data.active_jammer;
-
-                    // Update Spectrum Data
-                    spectrumChart.data.datasets[0].data = data.spectrum_data;
-                    spectrumChart.update();
-
-                    // Update Threats
-                    const threatList = document.querySelector('.threat-list');
-                    threatList.innerHTML = '';
-                    if (data.detected_threats.length > 0) {
-                        data.detected_threats.forEach(t => {
-                            let color = t.confidence > 0.9 ? 'var(--accent-red)' : 'var(--accent-blue)';
-                            let state = t.confidence > 0.9 ? 'LOCKED' : 'MONITORING';
-                            threatList.innerHTML += `
-                                <li class="threat-item">
-                                    <div>
-                                        <span class="threat-name">${t.type}</span><br>
-                                        <small>Freq: ${t.frequency} | Conf: ${Math.round(t.confidence * 100)}%</small>
-                                    </div>
-                                    <span style="color: ${color};">${state}</span>
-                                </li>
-                            `;
-                        });
-
-                        // Update direction based on primary threat
-                        const primary = data.detected_threats[0];
-                        document.querySelector('.needle').style.transform = `rotate(${primary.direction}deg)`;
-                        document.querySelector('.sidebar small').textContent = `Bearing: ${primary.direction}° REL`;
+                    // 1. Update Status Indicator
+                    const statusEl = document.getElementById('connectionStatus');
+                    if (data.risk_score > 6) {
+                        statusEl.className = 'status-pill alert';
+                        statusEl.innerHTML = '<div class="status-indicator"></div> ALARM DURUMU';
+                    } else {
+                        statusEl.className = 'status-pill';
+                        statusEl.innerHTML = '<div class="status-indicator"></div> SİSTEM NORMAL';
                     }
+
+                    // 2. Update Spectrum Chart
+                    if (data.spectrum_data && data.spectrum_data.length > 0) {
+                        // Pad or slice to fit chart
+                        let sData = data.spectrum_data;
+                        if (sData.length > 120) sData = sData.slice(0, 120);
+                        spectrumChart.data.datasets[0].data = sData;
+                        spectrumChart.update();
+                    }
+
+                    // 3. Update Extracted Parameters
+                    if (data.params) {
+                        document.getElementById('paramFreq').textContent = data.params.CenterFreq ? `${(data.params.CenterFreq).toFixed(1)} kHz` : '--';
+                        document.getElementById('paramBw').textContent = data.params.Bandwidth ? `${(data.params.Bandwidth).toFixed(1)} kHz` : '--';
+
+                        // Pseudo power based on max bin
+                        let maxMag = data.spectrum_data ? Math.max(...data.spectrum_data) : 0;
+                        document.getElementById('paramPower').textContent = maxMag > 0 ? `${(-100 + (maxMag * 50)).toFixed(1)} dBm` : '-- dBm';
+
+                        let pri = data.params.PRI ? (data.params.PRI).toFixed(2) : '--';
+                        let pw = data.params.PW ? (data.params.PW).toFixed(1) : '--';
+                        document.getElementById('paramPulse').textContent = `${pri}ms / ${pw}µs`;
+
+                        // Mock modulation based on scenario
+                        let mod = "BİLİNMİYOR";
+                        if (data.scenario.includes("Radar")) mod = "FMCW/DARBELİ";
+                        if (data.scenario.includes("Comms")) mod = "FSK/PSK";
+                        document.getElementById('paramMod').textContent = mod;
+                    }
+
+                    // 4. Update Threats & DoA
+                    updateThreatList(data.detected_threats, data.active_jammer);
+                    updateRiskScore(data.risk_level, data.risk_score);
+
+                    // 5. Update Geolocation & Map Display
+                    if (data.geoloc) {
+                        const [lat, lon] = data.geoloc;
+                        document.getElementById('geoCoord').textContent = `${lat.toFixed(4)}° N, ${lon.toFixed(4)}° E`;
+
+                        // Tactical Map Update (Center is 39.9255, 32.8662)
+                        const mapTarget = document.getElementById('mapTarget');
+                        if (data.detected_threats && data.detected_threats.length > 0) {
+                            mapTarget.style.display = 'block';
+                            // Simple scaling for demo
+                            const dLat = (lat - 39.9255) * 1000 + 50;
+                            const dLon = (lon - 32.8662) * 1000 + 50;
+                            mapTarget.style.top = `${Math.min(90, Math.max(10, 100 - dLat))}%`;
+                            mapTarget.style.left = `${Math.min(90, Math.max(10, dLon))}%`;
+                        } else {
+                            mapTarget.style.display = 'none';
+                        }
+                    }
+
+                    // 6. Update Hardware Monitor
+                    if (data.hardware) {
+                        document.getElementById('hwGpuLoad').textContent = data.hardware.gpu_load;
+                        document.getElementById('hwGpuTemp').textContent = data.hardware.gpu_temp;
+                        document.getElementById('hwBat').textContent = data.hardware.battery;
+                        document.getElementById('hwSdr').textContent = data.hardware.sdr;
+
+                        const btnRec = document.getElementById('btnRecord');
+                        if (data.hardware.recording) {
+                            btnRec.classList.add('active');
+                            btnRec.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> KAYITTA (SIGMF)';
+                        }
+                    }
+
+                    // 7. Mission State
+                    updateTimer();
+
                 })
-                .catch(err => console.error("Error fetching status:", err));
+                .catch(err => {
+                    console.error("Dashboard Sync Error:", err);
+                    document.getElementById('connectionStatus').className = 'status-pill alert';
+                    document.getElementById('connectionStatus').innerHTML = '<div class="status-indicator"></div> BAĞLANTI KOPTU';
+                });
         }
 
-        // Poll every 1 second
+        function updateThreatList(threats, activeJammer) {
+            const container = document.getElementById('threatContainer');
+            const blip = document.getElementById('targetBlip');
+            const bearingText = document.getElementById('bearingText');
+
+            if (!threats || threats.length === 0) {
+                container.innerHTML = `
+                    <div class="threat-card" style="justify-content: center; color: var(--text-muted); font-size: 0.9rem;">
+                        <i class="fa-solid fa-satellite-dish" style="margin-right: 10px;"></i> Temiz Spektrum - Tehdit Tespit Edilmedi
+                    </div>`;
+                blip.style.display = 'none';
+                bearingText.textContent = "TARANIYOR...";
+                return;
+            }
+
+            container.innerHTML = '';
+
+            // Sort by confidence (highest first)
+            threats.sort((a, b) => b.confidence - a.confidence);
+
+            // Update primary target DoA
+            const primary = threats[0];
+            if (primary.direction !== undefined) {
+                blip.style.display = 'block';
+                // Calculate position on the circle edge based on angle (0 is North)
+                // Convert to radians and shift by -90 deg so 0 is top
+                const rad = (primary.direction - 90) * (Math.PI / 180);
+                // Radius is 50% (of the 200px container)
+                const r = 40; // Percentage from center to edge roughly
+                const x = 50 + (r * Math.cos(rad));
+                const y = 50 + (r * Math.sin(rad));
+
+                blip.style.left = `${x}%`;
+                blip.style.top = `${y}%`;
+                bearingText.innerHTML = `${primary.direction.toFixed(1)}&deg; <span style="font-size: 0.7rem; color: var(--text-muted);">REL</span>`;
+            }
+
+            // Build list
+            threats.forEach((t, i) => {
+                let riskClass = t.confidence > 0.9 ? 'high-risk' : 'med-risk';
+
+                // Determine if this threat is currently being jammed
+                let isJammed = activeJammer && activeJammer !== "None" && i === 0; // Assume primary is jammed
+                if (isJammed) riskClass += ' active-jam';
+
+                let statusText = isJammed ? "MÜDAHALE" : (t.confidence > 0.9 ? "KİLİTLENDİ" : "TAKİPTE");
+                let statusClass = isJammed ? "jamming" : (t.confidence > 0.9 ? "locked" : "");
+
+                let card = document.createElement('div');
+                card.className = `threat-card ${riskClass}`;
+                card.innerHTML = `
+                    <div class="threat-info">
+                        <h4>${t.type}</h4>
+                        <div class="threat-meta">
+                            <span><i class="fa-solid fa-wave-square"></i> ${t.frequency}</span>
+                            <span><i class="fa-solid fa-crosshairs"></i> ${t.direction}&deg;</span>
+                        </div>
+                    </div>
+                    <div class="threat-status ${statusClass}">
+                        ${statusText} <br>
+                        <small style="font-weight:normal; font-size:0.7rem; color:var(--text-muted);">%${(t.confidence * 100).toFixed(0)} Güven</small>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateRiskScore(level, score) {
+            const el = document.getElementById('riskScore');
+            let trLevel = level.toUpperCase();
+            if (trLevel === "LOW") trLevel = "DÜŞÜK";
+            if (trLevel === "MEDIUM") trLevel = "ORTA";
+            if (trLevel === "HIGH") trLevel = "YÜKSEK";
+            if (trLevel === "CRITICAL") trLevel = "KRİTİK";
+
+            el.textContent = `RİSK: ${trLevel} (${score}/10)`;
+            if (score > 6) el.style.color = 'var(--neon-red)';
+            else if (score > 3) el.style.color = 'var(--neon-yellow)';
+            else el.style.color = 'var(--neon-green)';
+        }
+
+        // --- Interaction Logic ---
+
+        function toggleAutoMode() {
+            const btn = document.getElementById('btnAutoMode');
+            autoMode = !autoMode;
+            if (autoMode) {
+                btn.className = 'cyber-btn auto active';
+                btn.innerHTML = '<i class="fa-solid fa-brain"></i> OTONOM MÜDAHALE (ADSS) AKTİF';
+            } else {
+                btn.className = 'cyber-btn auto';
+                btn.innerHTML = '<i class="fa-solid fa-toggle-off"></i> MANUEL KONTROL (ADSS KAPALI)';
+            }
+        }
+
+        function triggerAction(type, method) {
+            console.log(`Action triggered: ${type} -> ${method}`);
+
+            // Visual feedback on the buttons
+            const buttons = document.querySelectorAll(`.cyber-btn.${type}`);
+            buttons.forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (autoMode) {
+                alert("Otonom Müdahale (ADSS) aktifken manuel işlem başlatılamaz. Lütfen önce Manuel Kontrol moduna geçin.");
+                event.currentTarget.classList.remove('active');
+                return;
+            }
+
+            // Fetch request to backend EA API
+            fetch('/api/action/' + type, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ method: method, threat_id: "T_PRIMARY" })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Server response:", data);
+                    // Optionally show a momentary feedback toast/color
+                })
+                .catch(err => {
+                    console.error("Action error:", err);
+                    event.currentTarget.classList.remove('active');
+                });
+        }
+
+        // --- Tuning & Hardware Helpers ---
+        let startTime = Date.now();
+        function updateTimer() {
+            const now = Date.now();
+            const diff = Math.floor((now - startTime) / 1000);
+            const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+            const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+            const s = (diff % 60).toString().padStart(2, '0');
+            document.getElementById('missionTimer').textContent = `${h}:${m}:${s}`;
+        }
+
+        function updateTuning() {
+            const freq = document.getElementById('tuneFreq').value;
+            const gain = document.getElementById('tuneGain').value;
+            document.getElementById('valFreq').textContent = freq + " MHz";
+            document.getElementById('valGain').textContent = gain + " dB";
+
+            fetch('/api/action/tune', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ freq: parseFloat(freq), gain: parseFloat(gain) })
+            });
+        }
+
+        function triggerRecord() {
+            const btn = document.getElementById('btnRecord');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> KAYDEDİLİYOR...';
+            btn.disabled = true;
+
+            fetch('/api/action/record', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Record success:", data);
+                    btn.style.borderColor = 'var(--neon-green)';
+                    btn.style.color = 'var(--neon-green)';
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> KAYDEDİLDİ (SIGMF)';
+                    setTimeout(() => {
+                        btn.style.borderColor = 'var(--neon-red)';
+                        btn.style.color = 'var(--neon-red)';
+                        btn.innerHTML = '<i class="fa-solid fa-circle"></i> KAYIT BAŞLAT';
+                        btn.disabled = false;
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error("Record error:", err);
+                    btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> HATA';
+                    btn.disabled = false;
+                });
+        }
+
+        // Start polling loop
         setInterval(updateDashboard, 1000);
-        updateDashboard();
+
+        // Initial call
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDashboard();
+        });
+
     </script>
 </body>
 

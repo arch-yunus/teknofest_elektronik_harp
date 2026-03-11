@@ -9,11 +9,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from src.simulation.mission_engine import MissionEngine
 from src.simulation.scenario_manager import ScenarioManager
-from src.signal_processing.analyzer import SpectrumAnalyzer, ParameterExtractor
+from src.jamming_logic.jammers import FrequencyHoppingJammer, JammerCoordinator
+from src.signal_processing.analyzer import SpectrumAnalyzer, ParameterExtractor, SigMFExporter
+from src.signal_processing.tracking import Geolocator, KalmanFilterDOA
 from src.ai_engine.classifier import SignalClassifier
 from src.ai_engine.autonomy_manager import AutonomyManager
 from src.signal_processing.lpi_detector import LPIDetector
-from src.jamming_logic.jammers import FrequencyHoppingJammer, JammerCoordinator
 
 app = Flask(__name__)
 mission_engine  = MissionEngine()
@@ -22,14 +23,24 @@ spectrum_ana    = SpectrumAnalyzer(sample_rate=1e6)
 param_extractor = ParameterExtractor(sample_rate=1e6)
 classifier      = SignalClassifier()
 lpi_detector    = LPIDetector(sample_rate=1e6)
-autonomy        = AutonomyManager(classifier, lpi_detector, {})
-fhss_jammer     = FrequencyHoppingJammer(sample_rate=1e6)
 jammer_coord    = JammerCoordinator(sample_rate=1e6)
+autonomy        = AutonomyManager(classifier, lpi_detector, jammer_coord)
+fhss_jammer     = FrequencyHoppingJammer(sample_rate=1e6)
+sigmf_exporter  = SigMFExporter(sample_rate=1e6)
+geolocator      = Geolocator()
+df_tracker      = KalmanFilterDOA()
 
 # Available scenarios to cycle through
 SCENARIOS  = ["Clear Sky", "Long Range Search", "Tracking Radar", "LPI Stealth Radar", "Fire Control Radar", "FHSS Comms"]
+# System State & Hardware Simulation
 _tick       = [0]
-_spectrum_history = []  # Rolling buffer of last 20 spectrum snapshots
+_tuning     = {"center_freq": 150.0, "gain": 45, "sample_rate": 1.0}
+_hardware   = {
+    "gpu_load": 42, "gpu_temp": 54, "cpu_load": 28,
+    "battery_v": 22.8, "sdr_status": "LOCKED",
+    "is_recording": False
+}
+_spectrum_history = []
 
 @app.route('/')
 def index():
@@ -59,14 +70,26 @@ def get_status():
     # Collect mission environment observations
     observations = mission_engine.update_environment()
     detected_threats = []
+    sensor_positions = [(39.9250, 32.8660), (39.9260, 32.8670)] # Simulated sensor positions
+    
     for obs in observations:
+        # Update DF Tracker
+        df_tracker.predict()
+        df_tracker.update(obs["bearing"])
+        state = df_tracker.get_state()
+
+        # Triangulate Geolocation (Simulated use)
+        # Using two bearings (real bearing + a slightly shifted one) for triangulation demo
+        est_pos = geolocator.triangulate(sensor_positions, [obs["bearing"], obs["bearing"] + 5.0])
+
         detected_threats.append({
             "id": obs["id"],
             "type": obs["type"],
             "confidence": round(0.82 + random.random() * 0.15, 2),
-            "direction": round(obs["bearing"], 1),
+            "direction": round(state["bearing"], 1),
             "frequency": f"{obs['freq'] / 1e6:.1f} MHz",
-            "signal_strength": round(obs["signal_strength"], 3)
+            "signal_strength": round(obs["signal_strength"], 3),
+            "geoloc": est_pos
         })
 
     return jsonify({
@@ -83,7 +106,16 @@ def get_status():
             "hop_detected": detected,
             "last_hop_freq_khz": round(hop_freq / 1e3, 1) if detected else None,
             "predicted_next_hop_khz": round(next_hop / 1e3, 1) if next_hop else None
-        }
+        },
+        "geoloc": detected_threats[0]["geoloc"] if detected_threats else [39.9255, 32.8662],
+        "hardware": {
+            "gpu_load": f"{_hardware['gpu_load'] + random.randint(-2, 2)}%",
+            "gpu_temp": f"{_hardware['gpu_temp'] + random.random():.1f}°C",
+            "battery": f"{_hardware['battery_v'] - (_tick[0]*0.001):.1f}V",
+            "sdr": _hardware['sdr_status'],
+            "recording": _hardware['is_recording']
+        },
+        "tuning": _tuning
     })
 
 @app.route('/api/threats')
@@ -107,24 +139,51 @@ def get_spectrum_history():
     """Returns last 20 spectrum snapshots for trend analysis."""
     return jsonify({"history": _spectrum_history, "count": len(_spectrum_history)})
 
-@app.route('/api/jammer', methods=['POST'])
-def control_jammer():
+@app.route('/api/action/<action_type>', methods=['POST'])
+def trigger_ea_action(action_type):
     """
-    Assigns a jammer via JammerCoordinator.
-    JSON body: {"threat_id": "T1", "threat_type": "LPI_Radar", "risk": 9}
+    Handles Manual Electronic Attack triggers from the dashboard.
+    Supported types: 'jam' (barrage, spot, interleaved), 'spoof' (analog, gnss, rgpo)
     """
-    data = request.get_json(force=True)
-    threat_id   = data.get("threat_id", "T0")
-    threat_type = data.get("threat_type", "Unknown")
-    risk        = int(data.get("risk", 5))
-    jammer_coord.assign_jammer(threat_id, threat_type, risk)
-    return jsonify({
-        "status": "assigned",
-        "threat_id": threat_id,
-        "threat_type": threat_type,
-        "active_assignments": list(jammer_coord.active_assignments.keys())
-    })
+    data = request.get_json(force=True, silent=True) or {}
+    method = data.get("method", "unknown")
+    threat_id = data.get("threat_id", "T1")
+
+    if action_type == 'jam':
+        # Map UI method to jammer type
+        jt_map = {"barrage": "noise", "spot": "noise", "interleaved": "adaptive"}
+        j_key = jt_map.get(method.lower(), "noise")
+        
+        jammer_coord.assign_jammer(threat_id, j_key, risk_score=8)
+        print(f"[UI COMMAND] Triggering JAMMING. Method: {method.upper()} -> {j_key} on Target {threat_id}")
+        return jsonify({"status": "success", "action": "jam", "method": method})
+    
+    elif action_type == 'spoof':
+        # Map UI method to spoofing type
+        st_map = {"analog": "analog", "gnss": "gnss", "rgpo": "spoofing"}
+        s_key = st_map.get(method.lower(), "noise")
+        
+        jammer_coord.assign_jammer(threat_id, s_key, risk_score=10)
+        print(f"[UI COMMAND] Triggering SPOOFING. Method: {method.upper()} -> {s_key} on Target {threat_id}")
+        return jsonify({"status": "success", "action": "spoof", "method": method})
+    
+    elif action_type == 'record':
+        _hardware["is_recording"] = True
+        # Simulate capturing and exporting current signal to SigMF
+        _, signal = scen_mgr.get_scenario_signal(SCENARIOS[_tick[0] % len(SCENARIOS)], duration=0.05)
+        meta_path, data_path = sigmf_exporter.export(signal, filename_prefix="UI_Manual_Capture")
+        print(f"[UI COMMAND] Recording saved to: {meta_path}")
+        # Automatically set recording flag back after a while (simulated)
+        return jsonify({"status": "success", "meta": meta_path, "data": data_path})
+    
+    elif action_type == 'tune':
+        _tuning["center_freq"] = data.get("freq", _tuning["center_freq"])
+        _tuning["gain"] = data.get("gain", _tuning["gain"])
+        return jsonify({"status": "success", "tuning": _tuning})
+    
+    return jsonify({"status": "error", "message": "Unknown action type"}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # When running locally, accessible at http://127.0.0.1:5000
+    app.run(debug=True, port=5000, host='0.0.0.0')
 

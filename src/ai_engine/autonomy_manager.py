@@ -16,10 +16,10 @@ class AutonomyManager:
     Autonomous Decision Support System (ADSS) — Phase 2.
     Decides the best action based on classified signals with risk prioritization.
     """
-    def __init__(self, classifier, lpi_detector, jammers_map):
+    def __init__(self, classifier, lpi_detector, jammer_coordinator):
         self.classifier = classifier
         self.lpi_detector = lpi_detector
-        self.jammers = jammers_map
+        self.jammer_coord = jammer_coordinator
         self.active_strategy = None
         self.threat_log = []       # Running log of detections
         self.risk_score = 0
@@ -74,6 +74,16 @@ class AutonomyManager:
         self.active_strategy = strategy
         risk_str = "🔴 HIGH" if self.risk_score >= 8 else ("🟡 MED" if self.risk_score >= 5 else "🟢 LOW")
         
+        # 7. Execute Strategy (Autonomous Mode)
+        if self.jammer_coord:
+            # Simple threshold: only jam risks >= 5 or if specifically prioritized
+            if self.risk_score >= 5 or label in ["Radar_FC", "LPI_Radar", "FHSS"]:
+                self.jammer_coord.assign_jammer("T1", label, self.risk_score)
+            else:
+                # Remove jammer if threat is low/noise
+                if "T1" in self.jammer_coord.active_assignments:
+                    del self.jammer_coord.active_assignments["T1"]
+
         # Ensure confidence is float for formatting
         conf_val = float(confidence) if confidence is not None else 0.0
         print(f"[ADSS] {threat_name} | Label: {label} | Risk: {risk_str} | Conf: {conf_val:.0%} -> {strategy}")

@@ -152,6 +152,53 @@ class AnalogDemodulator:
             diff_sig = np.diff(signal)
             return np.abs(diff_sig)
 
+class SigMFExporter:
+    """
+    Exports captured signals in a format compatible with the SigMF standard.
+    (Section 5.1.3: Sinyal Kayıt ve Veri Formatı)
+    """
+    def __init__(self, sample_rate=1e6):
+        self.sample_rate = sample_rate
+
+    def export(self, signal, filename_prefix="capture"):
+        import json
+        import os
+        import time
+
+        os.makedirs("captures", exist_ok=True)
+        timestamp = int(time.time())
+        
+        # Meta file (.sigmf-meta)
+        metadata = {
+            "global": {
+                "core:datatype": "cf32_le",
+                "core:sample_rate": self.sample_rate,
+                "core:version": "0.1.0",
+                "core:description": "Aegis-AI Tactical Capture"
+            },
+            "captures": [
+                {
+                    "core:sample_start": 0,
+                    "core:frequency": 150000.0, # Center frequency placeholder
+                    "core:datetime": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+                }
+            ],
+            "annotations": []
+        }
+
+        meta_path = f"captures/{filename_prefix}_{timestamp}.sigmf-meta"
+        data_path = f"captures/{filename_prefix}_{timestamp}.sigmf-data"
+
+        with open(meta_path, 'w') as f:
+            json.dump(metadata, f, indent=4)
+
+        # Data file (.sigmf-data)
+        # Convert to complex32 (IQ) and save as binary
+        iq_signal = signal.astype(np.complex64)
+        iq_signal.tofile(data_path)
+
+        return meta_path, data_path
+
 class DirectionFinder:
     """
     Simulates Direction of Arrival (DoA) estimation.

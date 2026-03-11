@@ -84,7 +84,8 @@ def test_eh_system():
     # 4. Autonomy Manager
     print("\n[4] Autonomy & Threat Prioritization")
     clf = SignalClassifier(use_dl=True)
-    autonomy = AutonomyManager(clf, lpi, {})
+    coord = JammerCoordinator(1e6)
+    autonomy = AutonomyManager(clf, lpi, coord)
     freqs = np.linspace(0, 500e3, 1000)
     mags  = np.zeros(1000); mags[500] = 1.0
     strategy = autonomy.process_detection(freqs, mags)
