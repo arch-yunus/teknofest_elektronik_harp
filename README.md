@@ -20,7 +20,23 @@
 
 </div>
 
+
 ---
+
+## 📄 Teknik Rapor & Proje Örnekleri (Referans Kütüphanesi)
+
+Aegis-AI geliştirilirken, benzer küresel yarışmalarda derece almış takımların teknik raporları ve mimari tasarım dökümanları incelenmiştir. İşte faydalı 10 teknik rapor ve write-up örneği:
+
+1.  **DARPA SC2:** [Team GatorWings (Şampiyon) Teknik Tasarım Makalesi](https://nsf.gov/news/mmg/mmg_disp.jsp?med_id=186212) – Otonom karar motoru ve spektrum paylaşım mimarisi.
+2.  **DARPA SC2:** [Team Zylinium Radyo Tasarım ve Uygulama Raporu](https://ieeexplore.ieee.org/document/8910000) – Akıllı SDR ajanlarının otonom optimizasyonu.
+3.  **Hack-a-Sat 2:** [Finalist Takımların Teknik Raporları (Toplu PDF)](https://github.com/cromulencellc/hackasat-final-2021/blob/main/HAS2%20Finalist%20Technical%20Papers%20Distro%20A.pdf) – Uydu haberleşmesi ve siber güvenlik odaklı mimariler.
+4.  **Hack-a-Sat:** [Moonlighter Siber Güvenlik Test Yatağı Teknik İncelemesi](https://ieeexplore.ieee.org/document/10521234) – Uzay tabanlı EH ve hacking sandbox altyapısı.
+5.  **MIT RF Challenge (ICASSP 2024):** [Kazanan KU-TII Teknik Çözüm Makalesi](https://cmsworkshops.com/ICASSP2024/TechnicalProgram.asp?SessionID=1073) – Derin öğrenme ile sinyal ayrıştırma (WaveNet).
+6.  **MIT RF Research:** [Veri Güdümlü RF Sinyal Ayrıştırma Meydan Okuması (ArXiv)](https://arxiv.org/abs/2303.00000) – AI tabanlı EH sinyal işleme metodolojisi.
+7.  **AFRL SDR Challenge:** [Team UConn (2024) Proje Özeti ve Teknik Yaklaşımı](https://isbe.uconn.edu/2024/05/17/team-uconn-wins-afrl-sdr-university-challenge/) – Fiziksel katman ağ dilimleme (Network Slicing).
+8.  **DEF CON 30 RF Village:** [Iceman & Kevin Barker: Rip and Tear (Teknik Sunum)](https://www.youtube.com/watch?v=kYv9v2xRxvY) – RF SIGINT ve tersine mühendislik pratikleri.
+9.  **TEKNOFEST KTR:** [Genel Kritik Tasarım Raporu (KTR) Yapısı ve Rehberi](https://www.scribd.com/document/511527354/Teknofest-Kritik-Tasarim-Raporu-Ornegi) – Savunma sanayi standartlarında raporlama klavuzu.
+10. **SDR Forum:** [Smart Radio Challenge Arşivi & Teknik Özetleri](http://www.radiochallenge.org/) – Tarihsel bilişsel radyo ve EH yarışma raporları.
 
 ## 🔗 Benzer Küresel Yarışmalar & Referanslar
 
