@@ -115,7 +115,13 @@ def get_status():
             "sdr": _hardware['sdr_status'],
             "recording": _hardware['is_recording']
         },
-        "tuning": _tuning
+        "tuning": _tuning,
+        "iq_samples": (np.cos(np.linspace(0, 10, 64)) + 1j*np.sin(np.linspace(0, 10, 64)) + np.random.normal(0, 0.1, 64)).tolist() if _tick[0] % 2 == 0 else (np.random.normal(0, 0.5, 64) + 1j*np.random.normal(0, 0.5, 64)).tolist(),
+        "ai_confidence": [
+            {"label": "BPSK", "value": 0.82 if _tick[0] % 3 == 0 else 0.1},
+            {"label": "QPSK", "value": 0.15 if _tick[0] % 3 == 0 else 0.75},
+            {"label": "FHSS", "value": 0.03}
+        ]
     })
 
 @app.route('/api/threats')

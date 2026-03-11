@@ -760,6 +760,90 @@
         }
 
         /* Responsive */
+        /* --- Advanced Visuals --- */
+        .advanced-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .visual-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            height: 180px;
+            position: relative;
+        }
+
+        .visual-label {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        #waterfallCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .constellation-plot {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* AI Confidence Bars */
+        .confidence-container {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .conf-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .conf-label {
+            width: 50px;
+            font-size: 0.7rem;
+            font-family: 'Orbitron';
+        }
+
+        .conf-bar-wrap {
+            flex-grow: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .conf-bar-fill {
+            height: 100%;
+            background: var(--neon-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--neon-blue-glow);
+        }
+
+        .conf-val {
+            width: 35px;
+            font-size: 0.7rem;
+            text-align: right;
+            color: var(--text-muted);
+        }
+
         @media (max-width: 1200px) {
             .dashboard-container {
                 grid-template-columns: 1fr;
@@ -859,6 +943,26 @@
                     <span class="param-label">Modülasyon</span>
                     <span class="param-value" id="paramMod">--</span>
                 </div>
+            </div>
+
+            <!-- Advanced Visuals Grid -->
+            <div class="advanced-grid">
+                <div class="visual-box">
+                    <div class="visual-label">Sinyal Şelalesi (Waterfall)</div>
+                    <canvas id="waterfallCanvas"></canvas>
+                </div>
+                <div class="visual-box">
+                    <div class="visual-label">Takımyıldız (I/Q)</div>
+                    <canvas id="constellationCanvas"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Confidence Section -->
+            <div class="panel-header" style="margin-top: 15px; border-bottom: 1px solid rgba(0, 242, 255, 0.2);">
+                <div class="panel-title"><i class="fa-solid fa-brain"></i> AI Sınıflandırma Güven Analizi</div>
+            </div>
+            <div class="confidence-container" id="confContainer">
+                <!-- Rows injected by JS -->
             </div>
         </div>
 
@@ -968,6 +1072,39 @@
                 </div>
             </div>
 
+            <!-- Tactical Map Injected -->
+            <div class="tactical-map">
+                <svg class="map-grid-svg" viewBox="0 0 100 100">
+                    <path d="M0 50 L100 50 M50 0 L50 100" stroke="var(--neon-blue)" stroke-width="0.5" fill="none" />
+                    <circle cx="50" cy="50" r="40" stroke="var(--neon-blue)" stroke-width="0.2" fill="none" />
+                </svg>
+                <div class="map-sensor" style="top: 50%; left: 50%;"></div>
+                <div class="map-emitter" id="mapTarget" style="display: none;"></div>
+            </div>
+
+            <!-- Hardware Health Injected -->
+            <div class="panel-header" style="margin-top: 15px;">
+                <div class="panel-title"><i class="fa-solid fa-microchip"></i> Donanım Sağlığı (Jetson)</div>
+            </div>
+            <div class="hardware-grid">
+                <div class="hw-item">
+                    <span class="hw-label">GPU YÜKÜ</span>
+                    <span class="hw-value" id="hwGpuLoad">--%</span>
+                </div>
+                <div class="hw-item">
+                    <span class="hw-value" id="hwGpuTemp">--°C</span>
+                    <span class="hw-label">SICAKLIK</span>
+                </div>
+                <div class="hw-item">
+                    <span class="hw-label">BESLEME</span>
+                    <span class="hw-value" id="hwBat">--V</span>
+                </div>
+                <div class="hw-item">
+                    <span class="hw-value" id="hwSdr">OFFLINE</span>
+                    <span class="hw-label">SDR LOK</span>
+                </div>
+            </div>
+
             <!-- Threat List -->
             <div class="panel-header" style="margin-top: 15px;">
                 <div class="panel-title"><i class="fa-solid fa-shield-halved"></i> Tehdit Ortamı</div>
@@ -1068,7 +1205,20 @@
                         let sData = data.spectrum_data;
                         if (sData.length > 120) sData = sData.slice(0, 120);
                         spectrumChart.data.datasets[0].data = sData;
-                        spectrumChart.update();
+                        spectrumChart.update('none'); // Update without animation for speed
+
+                        // Update Waterfall
+                        updateWaterfall(sData);
+                    }
+
+                    // 2.b Update Constellation
+                    if (data.iq_samples) {
+                        updateConstellation(data.iq_samples);
+                    }
+
+                    // 2.c Update AI Confidence
+                    if (data.ai_confidence) {
+                        updateAIConfidence(data.ai_confidence);
                     }
 
                     // 3. Update Extracted Parameters
@@ -1102,15 +1252,17 @@
 
                         // Tactical Map Update (Center is 39.9255, 32.8662)
                         const mapTarget = document.getElementById('mapTarget');
-                        if (data.detected_threats && data.detected_threats.length > 0) {
-                            mapTarget.style.display = 'block';
-                            // Simple scaling for demo
-                            const dLat = (lat - 39.9255) * 1000 + 50;
-                            const dLon = (lon - 32.8662) * 1000 + 50;
-                            mapTarget.style.top = `${Math.min(90, Math.max(10, 100 - dLat))}%`;
-                            mapTarget.style.left = `${Math.min(90, Math.max(10, dLon))}%`;
-                        } else {
-                            mapTarget.style.display = 'none';
+                        if (mapTarget) {
+                            if (data.detected_threats && data.detected_threats.length > 0) {
+                                mapTarget.style.display = 'block';
+                                // Simple scaling: 1deg lat ~ 111km. For 150px map, let's zoom in.
+                                const dLat = (lat - 39.9255) * 5000 + 50;
+                                const dLon = (lon - 32.8662) * 5000 + 50;
+                                mapTarget.style.top = `${Math.min(95, Math.max(5, 100 - dLat))}%`;
+                                mapTarget.style.left = `${Math.min(95, Math.max(5, dLon))}%`;
+                            } else {
+                                mapTarget.style.display = 'none';
+                            }
                         }
                     }
 
