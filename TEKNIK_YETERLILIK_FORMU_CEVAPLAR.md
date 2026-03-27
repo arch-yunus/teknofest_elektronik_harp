@@ -56,7 +56,11 @@ Hedef sinyale uygulanan DDC işleminin ardından, saptanan modülasyon tipine (A
 Konum bulma, coğrafi olarak yayılmış 3 farklı ED donanım birimi üzerinden gerçekleştirilecektir. Sistemin her bir düğümü, hedef sinyali mikro-saniye hassasiyetli GPS zaman damgaları (PPS) ile etiketleyecektir. Ana merkeze aktarılan I/Q verileri çapraz korelasyona (Cross-Correlation) sokularak TDOA (Varış Zamanı Farkı) kestirimi yapılacak, eş zamanlı üretilen AOA (Yön) vektörleriyle birleştirilip Genişletilmiş Kalman Filtreleri (EKF) yardımıyla yüksek hassasiyetli X,Y lokasyon tahmini yapılacaktır.
 
 **14. Elektronik Destek Sistemi’nde Yapay Zekâ kullanım hakkında bilgi veriniz.**
-Sinyal yoğunluğunun yüksek, gürültünün değişken olduğu karmaşık harp ortamında geleneksel algoritmalar hantallaşmaktadır. Bu nedenle ED alt sisteminde I/Q verilerini girdi olarak kabul eden 1D/2D Evrişimli Sinir Ağları (CNN) veya transformer tabanlı ağlar kullanılacaktır. Temel kullanım alanı; klasik yöntemlerle sınıflandırılması güçleşen düşük SNR'lı sinyallerin Modülasyon Türünü otomatik ve anlık olarak sınıflandırmak (AM/FM/FSK/BPSK/Lojik vb.) ve spektrogram görüntüleri üzerinden anomali veya spesifik frekans atlamalı (frequency hopping) hedeflerin tespit (Spectrum Sensing) işlemleridir.
+Sistemimizde, sinyal yoğunluğunun yüksek ve gürültü karakteristiğinin dinamik olduğu harp sahası koşullarını yönetmek için çok katmanlı bir Yapay Zeka mimarisi kullanılacaktır:
+1.  **Otomatik Modülasyon Sınıflandırma (AMC):** Ham I/Q verileri üzerinden derin öznitelik çıkaran ResNet tabanlı evrişimli ağlar (CNN) ve sinyalin zamansal bağımlılıklarını yakalayan Attention (Transformer) mekanizmaları entegre edilecektir. Bu sayede düşük SNR (-5dB ve altı) değerlerinde bile yüksek doğrulukla modülasyon teşhisi yapılacaktır.
+2.  **Sinyal Ayrıştırma (De-interleaving):** Karmaşık darbe katarı (pulse train) içerisinden farklı kaynaklara ait sinyalleri ayırmak için 'Unsupervised Clustering' (DBSCAN/HDBSCAN) ve LSTM tabanlı dizi tahminleyiciler kullanılacaktır.
+3.  **Anomali Tespiti:** Spektrumun normal davranışını öğrenen 'Autoencoder' yapıları ile siber-fiziksel saldırılar veya yeni nesil 'Low Probability of Intercept' (LPI) sinyalleri anlık olarak tespit edilecektir.
+Modellerimiz ONNX formatına dönüştürülerek uç cihazlarda (Edge AI) TensorRT optimizasyonu ile gerçek zamanlı (latency <10ms) koşturulacaktır.
 
 **15. Yarışmaya katılacak olan Elektronik Destek Alt Sistemi’nin SwaP (Size, Weight and Power) bilgilerini belirtiniz.**
 - Boyutlar (En x Boy x Yükseklik): 450 x 350 x 200 mm (SDR, işlemci üniteleri ve RF katı dahil muhafaza kutusu ölçüleridir, anten yayıcı birimler hariçtir.)
@@ -85,7 +89,11 @@ Analog telsiz ve haberleşme sistemlerine yönelik asimetrik taarruz için, önc
 GPS (L1, 1575.42 MHz) spektrumunda, SDR üzerinden GPS uydu efemeris(yörünge) verileri dinamik bir şekilde yeniden sentezlenecektir (Spoofing). Böylece hedef GNSS alıcısının kilitlendiği asıl uydu sinyalleri üzerine, daha güçlü fakat yanlış zaman (Timing Spoofing) veya yanlış koordinat (Position Spoofing) taşıyan sentetik PRN kodları ve navigasyon mesajları gönderilecek, hedefin rotasından çıkması veya senkronizasyon kaybetmesi sağlanacaktır.
 
 **22. Elektronik Taarruz Sistemi’nde Yapay Zekâ kullanım hakkında bilgi veriniz.**
-ET kapsamında "Bilişsel Elektronik Harp (Cognitive EW)" yaklaşımı uygulanacaktır. Özellikle frekans atlamalı (Frequency Hopping) veya otonom uyarlanabilir haberleşme yapan hedefleri kırmak için, Pekiştirmeli Öğrenme (Reinforcement Learning) modelleri kullanılacaktır. Bu modeller hedefin atlama paternlerini gerçek zamanlı olarak izleyip öğrenerek, bir sonraki geçeceği kanal frekansını ve zamanını tahmine (prediction) dayalı hedefleyici / akıllı önleyici karıştırma stratejilerini yöneteceklerdir.
+Elektronik Taarruz (ET) alt sistemimiz, konvansiyonel karıştırma yerine 'Bilişsel Elektronik Harp' (Cognitive EW) prensilerini temel alan bir karar mekanizmasına sahiptir:
+1.  **Akıllı Karıştırma Stratejisi (RL):** Hedef telsizin frekans atlama (Frequency Hopping) paternini veya dinamik güç kontrol mekanizmasını çözmek için 'Deep Reinforcement Learning' (PPO/DQN) tabanlı ajanlar kullanılacaktır. Ajan; spektrumu gözlemleyerek (State), hangi frekansa ne kadar güçle (Action) müdahale edeceğine karar verecek ve 'Look-through' periyodundaki başarı oranına göre (Reward) kendini optimize edecektir.
+2.  **Dinamik Dalga Şekli Optimizasyonu:** Hedefin hata düzeltme (FEC) veya spektrum yayma tekniklerini etkisiz bırakacak en verimli karıştırma dalga şeklini (Waveform Optimization) üretmek için Genetik Algoritmalar ve Sinir Ağları hibrit olarak kullanılacaktır.
+3.  **Adaptif Karar Destek:** Hedefin 'anti-jamming' yeteneklerini analiz ederek, hedefi istenen frekans bölgesine 'steering' (yönlendiren) proaktif aldatma senaryoları yapay zeka tarafından yönetilecektir.
+Bu yaklaşım, kısıtlı RF gücü ile maksimum spektral etkinlik (Smart Jamming) sağlayacaktır.
 
 **23. Yarışmaya katılacak olan Elektronik Taarruz Alt Sistemi’nin SwaP bilgilerini belirtiniz.**
 - Boyutlar: 550 x 450 x 250 mm (Çoklu SDR ve Güç Yükselteç (PA) Soğutma blokajlı muhafaza.)
