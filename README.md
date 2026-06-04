@@ -1,6 +1,6 @@
 <div align="center">
 
-![Arat OMEGA v3.0 Banner](assets/Arat_ai_omega.png)
+![Arat OMEGA v3.0 Banner](assets/arat_banner.png)
 
 # 🛰️ Arat OMEGA v3.0
 ### Otonom Spektrum Egemenliği ve Bilişsel Elektronik Harp Platformu
