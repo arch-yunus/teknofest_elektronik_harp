@@ -1,6 +1,6 @@
 # ELEKTRONİK HARP YARIŞMASI 2026 - KRİTİK TASARIM RAPORU
 
-**Takım Adı:** Dev-in-Scrubs
+**Takım Adı:** Arat
 **Proje Adı:** Aegis-AI OMEGA v3.0
 
 ---
@@ -77,11 +77,12 @@ Sistemi oluşturan temel alt sistemler (DKB'ler):
 ## 2. ORGANİZASYON ÖZETİ (5 Puan)
 
 ### 2.1 Takım Organizasyonu
-**Dev-in-Scrubs** takımı çok disiplinli mühendislik kadrosu ile aşağıdaki şekilde organize olmuştur:
-- **Sinyal İşleme (DSP) Liderliği:** SDR arayüzleri, FPGA/C++ tabanlı DDC/DUC yapıları ve I/Q sinyal işleme geliştirimi.
-- **Yapay Zeka Sorumlusu:** CNN tabanlı Modülasyon Sınıflandırma (AMC) ağları ve Reinforcement Learning tabanlı strateji ajanları.
-- **Donanım ve RF Entegrasyon:** USRP, Vivaldi/Log-periyodik antenler, güç regülasyonu ve tripod üzeri elektromekanik yerleşim.
-- **Yazılım Arayüzü ve Taktik Kontrol:** Aegis-UI Dashboard geliştirimi ve ağ haberleşmesi.
+**Arat** takımı, karmaşık mühendislik problemlerine "Solopreneur" (tek kişilik ekip) çevikliğiyle bütünsel çözümler üretmek amacıyla kurulmuştur. Ekibimiz, disiplinlerarası bir yaklaşımla teknolojinin farklı katmanlarında katma değer yaratmaya odaklanan tek bir teknoloji profesyonelinden oluşmaktadır. Organizasyonumuz aşağıdaki üç ana sütun üzerinde yürütülmektedir:
+- **Yapay Zeka & Otonom Sistemler:** Karar destek ve otomasyon süreçlerinin geliştirilmesi.
+- **Endüstriyel Optimizasyon:** Süreç ve kaynak verimliliği tasarımı ve iyileştirmeleri.
+- **Sistem Mimarisi:** Donanım ve yazılımın uyum içinde çalıştığı, ölçeklenebilir entegre sistemlerin kurgulanması.
+
+Takım üyemiz; Siber Vatan siber güvenlik eğitimi, TEİ Havacılık Motorları Okulu programı ve yapay zeka tabanlı patentli proje geliştirme tecrübelerine sahip olup, projelerin hem teknik hem de operasyonel süreçlerini tek merkezden yönetmektedir.
 
 ### 2.2 Zaman Akış Çizelgesi ve Bütçe
 Çalışmalar, önceden belirlenen 2026 OMEGA yol haritasına tam uyumlu ilerlemektedir:
@@ -161,5 +162,5 @@ Test planlaması kapsamında, v4.0 Yol Haritasında gerçek saha (Field Test) do
 1. O'Shea, T. J., & West, N. (2016). "Radio Machine Learning Dataset Generation with GNU Radio".
 2. DeepSig RadioML Veriseti.
 3. ResNet-Based AMC Mimarisi Literatürü.
-4. "Aegis-AI OMEGA v3.0 Geliştirici Dokümanları ve Manifesto", Dev-in-Scrubs Takımı, 2026.
+4. "Aegis-AI OMEGA v3.0 Geliştirici Dokümanları ve Manifesto", Arat Takımı, 2026.
 5. TEKNOFEST 2026 Elektronik Harp Şartnamesi.
