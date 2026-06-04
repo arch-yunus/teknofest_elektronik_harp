@@ -1,12 +1,12 @@
-# 🔬 Almasta-AI OMEGA Developer Guide: Deep Technical Architecture
+# 🔬 Arat OMEGA Developer Guide: Deep Technical Architecture
 
-This document provides a comprehensive technical breakdown of the **Almasta-AI OMEGA v3.0** system. It is intended for judges and developers to understand the signals engineering, AI fusion, and hardware orchestration principles.
+This document provides a comprehensive technical breakdown of the **Arat OMEGA v3.0** system. It is intended for judges and developers to understand the signals engineering, AI fusion, and hardware orchestration principles.
 
 ---
 
 ## 🏗️ System Architecture: The OMEGA Cycle
 
-Almasta-AI operates on an asynchronous "Sensing-to-Striking" pipeline, leveraging multi-threading for real-time performance.
+Arat operates on an asynchronous "Sensing-to-Striking" pipeline, leveraging multi-threading for real-time performance.
 
 ```mermaid
 graph TD
@@ -26,7 +26,7 @@ graph TD
 ## 🔬 Core Technologies & Mathematical Models
 
 ### 1. Multimodal Deep Learning Fusion
-Unlike standard AMC (Automatic Modulation Classification), Almasta-AI fuses two distinct feature streams:
+Unlike standard AMC (Automatic Modulation Classification), Arat fuses two distinct feature streams:
 -   **Stream A (Temporal):** Raw I/Q sequence processed via a **1D-ResNet** to capture phase/timing dependencies.
 -   **Stream B (Spectral):** FFT-calculated PSD magnitudes processed via **EfficientNet-v2** to capture frequency-domain signatures.
 -   **Fusion:** A late-fusion layer concatenates embeddings, providing a unified confidence score $P(Y | IQ, Spec)$.

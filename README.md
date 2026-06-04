@@ -1,8 +1,8 @@
 <div align="center">
 
-![Almasta-AI OMEGA v3.0 Banner](assets/almasta_ai_omega.png)
+![Arat OMEGA v3.0 Banner](assets/Arat_ai_omega.png)
 
-# 🛰️ Almasta-AI OMEGA v3.0
+# 🛰️ Arat OMEGA v3.0
 ### Otonom Spektrum Egemenliği ve Bilişsel Elektronik Harp Platformu
 
 [![TEKNOFEST 2026](https://img.shields.io/badge/TEKNOFEST-2026-blue.svg)](https://teknofest.org/)
@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![TRL](https://img.shields.io/badge/TRL-7-brightgreen.svg)]()
 
-*“Spektrumun ruhu, Almasta'nın değişkenliğiyle birleşiyor. Tespit edilemeyen, aldatan ve hükmeden bir güç.”*
+*“Spektrumun ruhu, Arat'nın değişkenliğiyle birleşiyor. Tespit edilemeyen, aldatan ve hükmeden bir güç.”*
 
 [MANIFESTO](MANIFESTO.md) | [AI PLANI](YAPAY_ZEKA_PLANI.md) | [Geliştirici Rehberi](DEVELOPER.md) | [Şartname Özeti](YARISMA_SARTNAMESI_DETAYLARI.md)
 
@@ -20,7 +20,7 @@
 
 ## 📖 Proje Hakkında
 
-**Almasta-AI OMEGA**, TEKNOFEST 2026 Elektronik Harp Yarışması için özel olarak tasarlanmış, milli imkanlarla geliştirilen bir **Bilişsel Elektronik Harp (Cognitive EW)** suite'idir. İsim babası olan Türk mitolojisindeki kılık değiştiren, yanıltıcı güç "Almasta" gibi, sistemimiz de elektromanyetik spektrumda değişkenlik göstererek düşman radarlarını ve haberleşme ağlarını otonom olarak manipüle eder.
+**Arat OMEGA**, TEKNOFEST 2026 Elektronik Harp Yarışması için özel olarak tasarlanmış, milli imkanlarla geliştirilen bir **Bilişsel Elektronik Harp (Cognitive EW)** suite'idir. İsim babası olan Türk mitolojisindeki kılık değiştiren, yanıltıcı güç "Arat" gibi, sistemimiz de elektromanyetik spektrumda değişkenlik göstererek düşman radarlarını ve haberleşme ağlarını otonom olarak manipüle eder.
 
 ---
 
@@ -28,7 +28,7 @@
 
 Sistemimiz TEKNOFEST 2026 Şartnamesindeki tüm zorunlu (Z) ve tercihli (T) görevleri kapsar:
 
-| Görev Kodu | Görev Tanımı | Almasta-AI Çözümü | Durum |
+| Görev Kodu | Görev Tanımı | Arat Çözümü | Durum |
 | :--- | :--- | :--- | :--- |
 | **ED-01** | Otonom Sinyal Tespiti | `SpectraAnalyzer` (Real-time PSD peak detection) | ✅ (Z) |
 | **ED-02** | Parametre Çıkarımı | `ParameterExtractor` (PRI, PW, Modülasyon, BW) | ✅ (Z) |
@@ -45,7 +45,7 @@ Sistemimiz TEKNOFEST 2026 Şartnamesindeki tüm zorunlu (Z) ve tercihli (T) gör
 
 ## 🧬 Sistem Mimarisi: OMEGA-Tier
 
-Almasta-AI, kapalı çevrim bir otonomi döngüsüyle (OODA Loop) çalışır:
+Arat, kapalı çevrim bir otonomi döngüsüyle (OODA Loop) çalışır:
 
 1.  **Sensing (Algılama):** SDR (USRP/BladeRF) üzerinden IQ verilerinin 25Msps hızında toplanması.
 2.  **Cognition (Bilişsellik):**
@@ -99,8 +99,8 @@ python launcher.py --mode gui
 
 <div align="center">
 
-*Almasta-AI, spektrumun efendisi olmak için TEKNOFEST 2026'ya hazır.*
+*Arat, spektrumun efendisi olmak için TEKNOFEST 2026'ya hazır.*
 
-**Developed with 💻 & 🏹 by Arkun-Yunus Team**
+**Developed with 💻 & 🏹 by Arat Takımı**
 
 </div>

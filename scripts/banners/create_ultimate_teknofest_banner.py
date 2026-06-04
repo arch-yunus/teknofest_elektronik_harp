@@ -94,11 +94,11 @@ def create_ultimate_teknofest_banner():
                         zorder=10)
 
     # Project Name
-    title_aegis = ax.text(12, 2.8, 'ALMASTA - AI', 
+    title_Arat = ax.text(12, 2.8, 'Arat - AI', 
                          fontsize=80, fontweight='bold', color='white',
                          ha='center', va='center', fontfamily='monospace',
                          style='italic', zorder=10)
-    title_aegis.set_path_effects([
+    title_Arat.set_path_effects([
         path_effects.withStroke(linewidth=8, foreground='#00f2ff', alpha=0.5),
         path_effects.withStroke(linewidth=15, foreground='#00f2ff', alpha=0.1),
         path_effects.Normal()

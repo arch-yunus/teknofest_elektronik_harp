@@ -1,7 +1,7 @@
 # ELEKTRONİK HARP YARIŞMASI 2026 - KRİTİK TASARIM RAPORU
 
 **Takım Adı:** Arat
-**Proje Adı:** Aegis-AI OMEGA v3.0
+**Proje Adı:** Arat OMEGA v3.0
 
 ---
 
@@ -38,7 +38,7 @@
 ## 1. TEMEL SİSTEM ÖZETİ (10 Puan)
 
 ### 1.1 Sistem Tanımı
-Aegis-AI OMEGA, modüler, yapay zeka destekli ve Software Defined Radio (SDR) tabanlı entegre bir Bilişsel Elektronik Harp (Cognitive EW) platformudur. Sistem, coğrafi olarak dağıtık 2 ana üniteden oluşmaktadır: Bir adet **Ana ED/ET Ünitesi** ve bir adet **Yavru ED/ET Ünitesi**. Sistem, spektrumu akıllı otonom algoritmalarla analiz edip hedefe dinamik reaksiyon (karıştırma/aldatma) verebilen kapalı çevrim (closed-loop) bir otonomiye sahiptir. 
+Arat OMEGA, modüler, yapay zeka destekli ve Software Defined Radio (SDR) tabanlı entegre bir Bilişsel Elektronik Harp (Cognitive EW) platformudur. Sistem, coğrafi olarak dağıtık 2 ana üniteden oluşmaktadır: Bir adet **Ana ED/ET Ünitesi** ve bir adet **Yavru ED/ET Ünitesi**. Sistem, spektrumu akıllı otonom algoritmalarla analiz edip hedefe dinamik reaksiyon (karıştırma/aldatma) verebilen kapalı çevrim (closed-loop) bir otonomiye sahiptir. 
 Sistemi oluşturan temel alt sistemler (DKB'ler):
 - **DKB-01 SDR Alıcı/Verici Ünitesi:** Geniş bantlı RF sinyallerini I/Q verisine dönüştüren ve karıştırma sinyallerini yayan ana RF katmanı (Ettus USRP).
 - **DKB-02 İşleme Birimi (SBC):** Algoritmaların koştuğu, yüksek performanslı işlemci ünitesi (Raspberry Pi 5 / Jetson).
@@ -123,13 +123,13 @@ Sinyal tespitinden sonra Digital Down Conversion (DDC) ile hedef sinyal ana band
 Modülasyon sınıflandırmasında kural tabanlı algoritmalar ile **1D CNN derin öğrenme mimarisi (ResNet tabanlı)** hibrit olarak kullanılır. Sinyal spektrumundan ve I/Q dağılımından özellikleri çıkararak -5dB SNR'a kadar modülasyon (AM, FM, PSK, QAM vb.) ve sembol hızı %90 üzerinde başarı ile saptanır. 
 
 ### 4.3 Sinyal İzleme ve Dinleme
-Analiz edilen sinyalin şifresiz bir analog (NBFM, AM) muhabere olduğu teyit edildiğinde, Costas loop ve PLL temelli demodülatör bloklar aktif edilir. Analog ses doğrudan Aegis-UI üzerinden operatörün kullanımına sunulur veya WAV olarak kaydedilir. Sayısal sinyallerde ise pulse yapıları çıkarılarak PDW (Pulse Descriptor Word) şeklinde veritabanına yazılır.
+Analiz edilen sinyalin şifresiz bir analog (NBFM, AM) muhabere olduğu teyit edildiğinde, Costas loop ve PLL temelli demodülatör bloklar aktif edilir. Analog ses doğrudan Arat-UI üzerinden operatörün kullanımına sunulur veya WAV olarak kaydedilir. Sayısal sinyallerde ise pulse yapıları çıkarılarak PDW (Pulse Descriptor Word) şeklinde veritabanına yazılır.
 
 ### 4.4 Yön Bulma (DF)
 Yön bulma görevi, **Faz Karşılaştırmalı Yön Bulma** prensibiyle gerçekleştirilmektedir. 12 adet Vivaldi anten ile dairesel dizeye ulaşan sinyallerin uzamsal faz farkları hesaplanır. Algoritma olarak yüksek çözünürlüklü **MUSIC (Multiple Signal Classification)** ve Correlative Interferometry tercih edilmiştir. Bu sayede < 3 derece RMS doğruluğu hedeflenmiştir. 
 
 ### 4.5 Konum Belirleme
-Konum belirleme görevi, **Varış Zamanı Farkı (TDOA)** ve Yön Kestirimi (AOA) verilerinin birleştirilmesi (Füzyon) ile yapılır. Bu işlem için asgari 2 adet dağıtık istasyon (Ana Ünite ve Yavru Ünite) konumlandırılır. GPS/PPS hassas zaman damgalarıyla eşitlenen istasyonlardan gelen zaman ve açı vektörleri kesiştirilerek harita (Aegis-UI) üzerinde kaynağın 2D lokasyonu kestirilir.
+Konum belirleme görevi, **Varış Zamanı Farkı (TDOA)** ve Yön Kestirimi (AOA) verilerinin birleştirilmesi (Füzyon) ile yapılır. Bu işlem için asgari 2 adet dağıtık istasyon (Ana Ünite ve Yavru Ünite) konumlandırılır. GPS/PPS hassas zaman damgalarıyla eşitlenen istasyonlardan gelen zaman ve açı vektörleri kesiştirilerek harita (Arat-UI) üzerinde kaynağın 2D lokasyonu kestirilir.
 
 ## 5. ET GÖREVLERİ VE EKRAN GÖRSELLERİ (20 Puan)
 
@@ -156,11 +156,11 @@ Yazılım mimarisi içerisinde `simulation/` modülü bulunmaktadır.
 Donanım altyapısı USRP B210'lar ile masaüstü laboratuvar ortamında RF loopback ve attenuatör (zayıflatıcı) testleri ile doğrulanmaktadır. I/Q veri transfer hızı darboğazları tespit edilip Raspberry Pi 5 USB 3.0 I/O optimizasyonları tamamlanmıştır.
 
 ### 6.3 Görev Testleri
-Test planlaması kapsamında, v4.0 Yol Haritasında gerçek saha (Field Test) doğrulama testleri yer almaktadır. Yazılım çevrim (SITL) sentetik EH ortamı testleri tamamlanmış olup, donanım entegreli (HITL) kapalı devre RF testleri sürmektedir. Anten dizileri üretildikten sonra açık arazide iki istasyon kurularak TDOA zaman senkronizasyonu doğrulaması yapılacaktır. Testler Aegis-UI Dashboard ve `verify_eh.py` (System Integrity Check) üzerinden takip edilmektedir.
+Test planlaması kapsamında, v4.0 Yol Haritasında gerçek saha (Field Test) doğrulama testleri yer almaktadır. Yazılım çevrim (SITL) sentetik EH ortamı testleri tamamlanmış olup, donanım entegreli (HITL) kapalı devre RF testleri sürmektedir. Anten dizileri üretildikten sonra açık arazide iki istasyon kurularak TDOA zaman senkronizasyonu doğrulaması yapılacaktır. Testler Arat-UI Dashboard ve `verify_eh.py` (System Integrity Check) üzerinden takip edilmektedir.
 
 ## 7. REFERANSLAR
 1. O'Shea, T. J., & West, N. (2016). "Radio Machine Learning Dataset Generation with GNU Radio".
 2. DeepSig RadioML Veriseti.
 3. ResNet-Based AMC Mimarisi Literatürü.
-4. "Aegis-AI OMEGA v3.0 Geliştirici Dokümanları ve Manifesto", Arat Takımı, 2026.
+4. "Arat OMEGA v3.0 Geliştirici Dokümanları ve Manifesto", Arat Takımı, 2026.
 5. TEKNOFEST 2026 Elektronik Harp Şartnamesi.

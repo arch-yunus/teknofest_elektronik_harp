@@ -30,7 +30,7 @@ class EdgeOptimizer:
         )
         return quantized_model
 
-    def export_to_onnx(self, iq_shape=(1, 2, 1024), spec_shape=(1, 1, 512), path="models/aegis_ai_v3.onnx"):
+    def export_to_onnx(self, iq_shape=(1, 2, 1024), spec_shape=(1, 1, 512), path="models/Arat_ai_v3.onnx"):
         """
         Exports the model to ONNX format for TensorRT compatibility.
         """

@@ -53,7 +53,7 @@ def create_teknofest_banner():
                     ha='center', va='center', fontfamily='monospace',
                     zorder=10)
 
-    title2 = ax.text(12, 1.8, 'ALMASTA - AI', 
+    title2 = ax.text(12, 1.8, 'Arat - AI', 
                     fontsize=60, fontweight='bold', color='white',
                     ha='center', va='center', fontfamily='Orbitron',
                     zorder=10, style='italic')
@@ -62,7 +62,7 @@ def create_teknofest_banner():
         path_effects.Normal()
     ])
 
-    sub_aegis = ax.text(12, 0.8, 'OTONOM SİNYAL İSTİHBARATI & TAARRUZ SİSTEMİ',
+    sub_Arat = ax.text(12, 0.8, 'OTONOM SİNYAL İSTİHBARATI & TAARRUZ SİSTEMİ',
                        fontsize=16, fontweight='bold', color='#E30A17',
                        ha='center', va='center', fontfamily='monospace',
                        alpha=0.9, zorder=11)

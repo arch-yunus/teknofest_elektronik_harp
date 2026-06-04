@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Almasta-AI (TEKNOFEST 2026 Electronic Warfare) project will be documented here.
+All notable changes to the Arat (TEKNOFEST 2026 Electronic Warfare) project will be documented here.
 
 ## [3.0.0-OMEGA] - 2026-04-14
 ### Added
@@ -10,7 +10,7 @@ All notable changes to the Almasta-AI (TEKNOFEST 2026 Electronic Warfare) projec
 - **LPI De-masking Upgrade**: Added Spectral Entropy detection to `LPIDetector` to complement existing WVD/SVD/STFT methods (now 5-method voting).
 - **Mission Engine OMEGA**: Added dynamic `Drone Swarm` and `Cognitive Radar` scenarios to the simulation suite.
 - **Bayesian Risk Assessment**: Upgraded `AutonomyManager` with weighted risk indexing based on detection confidence.
-- **Project MANIFESTO**: Established the core Electronic Warfare doctrine for the Almasta-AI platform.
+- **Project MANIFESTO**: Established the core Electronic Warfare doctrine for the Arat platform.
 - **Premium Documentation Overhaul**: Massive README update with high-density technical depth and OMEGA-tier aesthetics.
 - **OMEGA Visuals**: Generated and integrated high-fidelity mission banners.
 
@@ -30,7 +30,7 @@ All notable changes to the Almasta-AI (TEKNOFEST 2026 Electronic Warfare) projec
 - **Phase 4 - Deep Learning Integration**: Added PyTorch CNN model core (`DummyDLClassifier`) in `src/ai_engine/dl_classifier.py` for direct I/Q signal classification.
 - **Classification Engine Update**: Fused `SignalClassifier` rule-based engine with DL inference for robust classification.
 - **Data Export Strategy**: Added `export_dataset()` to `ScenarioManager` to facilitate easy generation of `.npy` datasets for future DL model training.
-- **DL Validation Suite**: Upgraded `verify_eh.py` and `test_aegis.py` with specific tests to validate PyTorch availability and inference execution without crashing.
+- **DL Validation Suite**: Upgraded `verify_eh.py` and `test_Arat.py` with specific tests to validate PyTorch availability and inference execution without crashing.
 
 ## [1.4.0] - 2026-03-09
 ### Added
